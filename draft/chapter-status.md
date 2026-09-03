@@ -8,12 +8,12 @@ public/, пока для неё не получены все обязатель�
 |---|---|---|---|---|
 | Введение | Frontend как система | draft/chapters/00-introduction.md | public | опубликовано как `public/00-introduction.md` |
 | 1 | Как мыслить о frontend-системе | draft/chapters/01-system-thinking.md | public | Nuxt 3 → Nuxt 4 фрагменты проверены и повторно подтверждены в public/ |
-| 2 | Состояние приложения | draft/chapters/02-application-state.md | public | повторная проверка public/ выполнена |
-| 3 | Границы ответственности | draft/chapters/03-boundaries.md | public | повторная проверка public/ выполнена |
+| 2 | Состояние приложения | draft/chapters/02-application-state.md | public | Nuxt 3/4 state-фрагмент проверен и повторно подтверждён в public/ |
+| 3 | Границы ответственности | draft/chapters/03-boundaries.md | public | Nuxt 3/4 plugin/middleware-фрагмент проверен и повторно подтверждён в public/ |
 | 4 | Пользовательские сценарии | draft/chapters/04-user-scenarios.md | public | повторная проверка public/ выполнена |
 | 5 | Производительность | draft/chapters/05-performance.md | public | повторная проверка public/ выполнена |
 | 6 | Качество изменений | draft/chapters/06-change-quality.md | public | повторная проверка public/ выполнена |
-| 7 | Доставка приложения | draft/chapters/07-delivery.md | public | повторная проверка public/ выполнена |
+| 7 | Доставка приложения | draft/chapters/07-delivery.md | public | Nuxt runtimeConfig/Nitro-фрагмент проверен и повторно подтверждён в public/ |
 | 8 | Устойчивые решения | draft/chapters/08-resilient-patterns.md | public | повторная проверка public/ выполнена |
 
 ## Проверка введения и содержания
@@ -32,10 +32,11 @@ public/, пока для неё не получены все обязатель�
 
 | Вид проверки | Объём | Результат и подтверждение |
 |---|---|---|
-| Техническая | восемь глав и framework-фрагменты части 1 | JavaScript проверен `node --check`, URL-сценарии выполнены локально командой `node --input-type=commonjs -`; независимая TypeScript-функция проверена через `bun -e`, Nuxt-фрагменты проверены по официальной документации и статическим чтением |
+| Техническая | восемь глав и framework-фрагменты частей 1, 2, 3 и 7 | JavaScript проверен `node --check`, URL-сценарии и state/service/runtime-сценарии выполнены локально командой `node --input-type=commonjs -`; независимые TypeScript-фрагменты проверены через `bun -e`, Nuxt-фрагменты проверены по официальной документации и статическим чтением |
 | Редакторская | введение и восемь глав, включая добавленный раздел части 1 | сверены разделы шаблона, порядок терминов, одна основная задача главы, парные migration-примеры и ограничения; структурная проверка завершилась без замечаний |
 | Privacy до переноса | briefs, введение, главы и карта источников | ручной просмотр и поиск закрытых имён, путей, адресов, метрик и данных не нашли публикационных деталей |
-| Nuxt framework-review | часть 1, Nuxt 3/4 section | проверены термины до кода, синтетические деревья, плохой и хороший migration-подходы, SSR-загрузка и ограничения; version-sensitive claims сверены с официальными Nuxt 3/4 docs |
+| Nuxt framework-review | части 1, 2, 3 и 7, Nuxt 3/4 sections | проверены термины до кода, синтетические деревья, плохие и хорошие framework-примеры, SSR/state-загрузка, транспортные границы, runtimeConfig/Nitro и ограничения; version-sensitive claims сверены с официальными Nuxt 3/4 docs |
+| Nuxt cross-chapter audit | части 2, 3 и 7 | пробелы закрыты: добавлены Nuxt 3 `useState` и SSR-сериализация, Nuxt 3/4 app plugins и route/server middleware, Nuxt runtimeConfig/Nitro и Node entrypoint; public повторно прошёл privacy- и content-проверку |
 
 После переноса эти проверки повторены для `public/`, а регрессионный сценарий
 запрещённой внутренней ссылки выполнен отдельно.

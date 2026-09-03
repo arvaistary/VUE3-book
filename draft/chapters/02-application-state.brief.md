@@ -4,7 +4,8 @@
 
 После части читатель сможет разделить локальное, общее и производное состояние
 и спроектировать безопасное для SSR хранилище, не создающее данные одного
-запроса общими для всех пользователей. Уровень — начинающий или middle-
+запроса общими для всех пользователей. Он также увидит, как `useState` Nuxt
+связывает состояние с SSR и клиентской активацией. Уровень — начинающий или middle-
 разработчик, знающий `ref` и базовые компоненты Vue.
 
 ## Аудитория и предпосылки
@@ -16,7 +17,8 @@
 ## Термины
 
 Состояние (state), локальное состояние, общее состояние (shared state), store
-(хранилище), производное значение (derived state), SSR, hydration (сверка
+(хранилище), composable (переиспользуемая функция), `useState`, сериализуемое
+значение, производное значение (derived state), SSR, hydration (сверка
 серверной разметки с клиентским приложением), фабрика состояния.
 
 ## Минимальная задача и пара примеров
@@ -38,9 +40,14 @@
 - пример не использует браузерные API во время серверного выполнения;
 - показана причина утечки состояния и способ локальной проверки;
 - описаны hydration и компромиссы общего хранилища.
+- объяснено, почему `useState` требует уникального ключа и сериализуемого
+  значения, а при Nuxt 4 composable перемещается в `app/composables/`.
 
 ## Источники и проверка
 
-Проверка терминов: [Vue — State Management](https://vuejs.org/guide/scaling-up/state-management.html)
-и [Nuxt — Rendering Modes](https://nuxt.com/docs/guide/concepts/rendering). Код
-проверяется двумя независимыми экземплярами фабрики в Node.js.
+Проверка терминов: [Vue — State Management](https://vuejs.org/guide/scaling-up/state-management.html),
+[Nuxt 3 — State Management](https://nuxt.com/docs/3.x/getting-started/state-management),
+[Nuxt 3 — Rendering Modes](https://nuxt.com/docs/3.x/guide/concepts/rendering) и
+[Nuxt 4 — Upgrade Guide](https://nuxt.com/docs/4.x/getting-started/upgrade). Код
+проверяется двумя независимыми экземплярами фабрики в Node.js; Nuxt-фрагмент
+проверяется статически в учебном приложении.

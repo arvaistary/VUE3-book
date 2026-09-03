@@ -10,13 +10,14 @@
 ## Аудитория и предпосылки
 
 Читатель знает функции, объекты и смысл HTTP-метода, но может не знать терминов
-service layer, plugin и interceptor.
+service layer, plugin, route middleware и interceptor.
 
 ## Термины
 
 Слой ответственности, service layer (слой прикладных операций), transport
-adapter (транспортный адаптер), plugin (глобальное подключение зависимости),
-interceptor (перехватчик), middleware (проверка навигации).
+adapter (транспортный адаптер), `$fetch`, Nuxt plugin (подключение зависимости),
+route middleware (маршрутная проверка), server middleware (серверная обработка),
+interceptor (перехватчик).
 
 ## Минимальная задача и пара примеров
 
@@ -37,9 +38,13 @@ interceptor (перехватчик), middleware (проверка навига�
 - плохой и хороший код используют один синтетический ресурс;
 - показана единая обработка ожидаемого ответа;
 - отдельно названы границы middleware и сетевого слоя.
+- сопоставлены расположения plugin и route/server middleware в Nuxt 3 и Nuxt 4.
 
 ## Источники и проверка
 
-Термины сопоставляются с [Nuxt — Plugins](https://nuxt.com/docs/guide/directory-structure/plugins)
-и [Nuxt — Middleware](https://nuxt.com/docs/guide/directory-structure/middleware).
-Пример проверяется локальным транспортным адаптером без HTTP-сервера.
+Термины сопоставляются с [Nuxt 3 — Plugins](https://nuxt.com/docs/3.x/directory-structure/plugins),
+[Nuxt 3 — Middleware](https://nuxt.com/docs/3.x/directory-structure/middleware),
+[Nuxt 4 — Directory Structure](https://nuxt.com/docs/4.x/directory-structure) и
+[Nuxt 4 — Upgrade Guide](https://nuxt.com/docs/4.x/getting-started/upgrade).
+Пример сервиса проверяется локальным транспортным адаптером без HTTP-сервера,
+а framework-фрагмент — статическим чтением.
