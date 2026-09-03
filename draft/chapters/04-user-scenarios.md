@@ -1,17 +1,17 @@
 # Часть 4. Пользовательские сценарии: формы и авторизация
 
-## Учебная цель
-
-После этой главы вы сможете описать отправку формы как последовательность
-наблюдаемых состояний, различить ошибки ввода и сервера и защитить действие
-от повторной отправки. Нужны базовые JavaScript и понимание событий формы.
-
 ## Ситуация и риск для пользователя
 
 Пользователь вводит адрес, нажимает кнопку и не видит реакции. Он нажимает
 ещё раз, в результате получает два уведомления или сообщение «произошла
 ошибка», хотя адрес уже был принят. Для человека непонятно, что произошло,
 а команда не может отличить ошибку ввода от временной проблемы сервера.
+
+## Учебная цель
+
+После этой главы вы сможете описать отправку формы как последовательность
+наблюдаемых состояний, различить ошибки ввода и сервера и защитить действие
+от повторной отправки. Нужны базовые JavaScript и понимание событий формы.
 
 ## Термины
 
@@ -71,6 +71,7 @@ function createBadForm(send) {
 ```js
 function createSubscriptionForm(send) {
   let state = { status: 'idle', message: '' };
+  const snapshot = () => ({ ...state });
 
   return {
     async submit(email) {
@@ -80,7 +81,7 @@ function createSubscriptionForm(send) {
 
       if (!/^\S+@\S+\.\S+$/.test(email)) {
         state = { status: 'error', message: 'Проверьте адрес электронной почты' };
-        return state;
+        return snapshot();
       }
 
       state = { status: 'loading', message: '' };
@@ -89,7 +90,7 @@ function createSubscriptionForm(send) {
         result = await send(email);
       } catch {
         state = { status: 'error', message: 'Сервис временно недоступен' };
-        return state;
+        return snapshot();
       }
 
       if (result.ok) {
@@ -100,11 +101,9 @@ function createSubscriptionForm(send) {
         state = { status: 'error', message: 'Попробуйте ещё раз позже' };
       }
 
-      return state;
+      return snapshot();
     },
-    getState() {
-      return { ...state };
-    },
+    getState: snapshot,
   };
 }
 ```
