@@ -1,24 +1,25 @@
-# External Artifacts Contract
+# Изолированное хранение артефактов
 
-External mode keeps Spec-Kit files in a sidecar spec root and evaluates product
-provenance in a separately bound Git worktree.
+По умолчанию Spec-Kit Modern хранит артефакты задачи в текущем Git-репозитории.
+Режим `external` нужен только тогда, когда артефакты и проверяемые файлы
+находятся в разных рабочих каталогах.
 
-Configure the binding from the sidecar root:
+Настройте режим из каталога с артефактами:
 
 ```bash
-bash workflow/core/configure-external-artifacts.sh --product-root /path/to/product
+bash workflow/core/configure-external-artifacts.sh \
+  --product-root /absolute/path/to/worktree
 ```
 
-The helper writes `.specify/external-project.toml` and copies the scanner
-template to `.specify/no-trace-patterns.toml`. It rejects a product root that
-is missing, is not a Git worktree, or contains the sidecar root. Rebinding an
-existing sidecar requires `--overwrite`.
+Команда проверяет, что указанный каталог существует, является Git worktree и не
+содержит каталог с артефактами. Настройка сохраняется в
+`.specify/external-project.toml`; повторная привязка требует флага
+`--overwrite`.
 
-The Hybrid finalizer uses the binding for `base_ref`, commit ancestry, scope,
-worktree cleanliness, whitespace, and adapter command roots. Before evidence
-validation it runs `check-no-trace.sh`, which scans staged, unstaged, and
-untracked product paths and newly added content. Any finding or invalid
-configuration blocks delivery.
+После настройки финализатор проверяет provenance, scope, чистоту рабочей копии,
+whitespace и корни команд. Сканер `check-no-trace.sh` просматривает staged-,
+unstaged- и untracked-файлы и блокирует результат при обнаружении служебного
+следа.
 
-The scanner patterns are project policy. Keep them in the sidecar root and
-review changes to them as workflow/security changes.
+Этот режим не меняет правила процесса: `base_ref`, allowlist, denylist и
+Evidence Index обязательны в любом случае.

@@ -18,7 +18,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
 
-Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/speckit.plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
+Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/speckit.plan`. If the user explicitly states they are skipping clarification (for example, an exploratory spike), you may proceed, but must warn that later rework risk increases.
 
 Execution steps:
 
@@ -120,14 +120,14 @@ Execution steps:
     - Only include questions whose answers materially impact architecture, data modeling, task decomposition, test design, UX behavior, operational readiness, or compliance validation.
     - Ensure category coverage balance: attempt to cover the highest impact unresolved categories first; avoid asking two low-impact questions when a single high-impact area (e.g., security posture) is unresolved.
     - Exclude questions already answered, trivial stylistic preferences, or plan-level execution details (unless blocking correctness).
-    - Favor clarifications that reduce downstream rework risk or prevent misaligned acceptance tests.
+    - Favor clarifications that reduce later rework risk or prevent misaligned acceptance tests.
     - If more than 5 categories remain unresolved, select the top 5 by (Impact * Uncertainty) heuristic.
     - Before finalizing the queue, include every applicable high-risk checklist
       item that is Partial or Missing unless its answer is already made explicit
       elsewhere in the spec. Group questions only when one answer produces
       unambiguous, independently testable rules; never hide separate guard,
       privacy, concurrency, side-effect, or evidence decisions behind a vague
-      umbrella question.
+      broad question.
     - The question quota does not permit silently dropping an applicable
       high-risk item. If five accepted answers cannot close the checklist, stop
       with an explicit blocker and do not recommend `/speckit.plan`.

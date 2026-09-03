@@ -1,5 +1,5 @@
 ---
-description: Hybrid finalize — Umbrella Spec-Kit plus fail-closed delivery gates.
+description: Hybrid finalize — Spec-Kit Modern plus fail-closed delivery gates.
 ---
 
 ## User Input
@@ -12,8 +12,8 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Purpose
 
-Close an implemented work item using Umbrella Spec-Kit artifacts plus the
-portable Hybrid quality layer. This command is mandatory for a READY decision.
+Close an implemented work item using Spec-Kit Modern artifacts and the Hybrid
+quality layer. This command is mandatory for a READY decision.
 
 ## Required sequence
 
@@ -27,15 +27,15 @@ portable Hybrid quality layer. This command is mandatory for a READY decision.
    malformed inputs, side effects, concurrency, and evidence integrity.
 4. Confirm that the implementation commit is after the recorded `base_ref`,
    that only the task allowlist changed, and that the worktree is clean.
-5. If `.specify/external-project.toml` exists, run
-   `workflow/core/check-no-trace.sh` and add `NO_TRACE=PASS` with the exact
-   command to the Evidence Index. Resolve Git provenance in the bound product
-   worktree, not in the sidecar spec root.
+5. If isolated artifact mode is enabled, run `workflow/core/check-no-trace.sh`
+   and add `NO_TRACE=PASS` with the exact command to the Evidence Index. Resolve
+   provenance in the Git worktree whose files are being checked.
 6. Create a DoD report with a `## Evidence index`. Every required marker must
    point to a current command, named test, or runtime output; a textual PASS,
-   skipped test, or old report is not proof. Include the adapter's explicit
-   evidence mode: `product` or sandbox-only `workflow-only`.
-7. Run the adapter from the repository root:
+   skipped test, or old report is not proof. Include the EVIDENCE_MODE selected
+   by `workflow/project/technology-profile.env`; this book uses
+   `EVIDENCE_MODE=product` for manuscript and example checks.
+7. Run the local finalizer from the repository root:
 
 ```bash
 bash workflow/project/hybrid-finalize.sh \
@@ -53,9 +53,9 @@ bash workflow/project/hybrid-finalize.sh \
   E2E, and adversarial obligations; use `not_applicable` with a reason.
 - Missing allowlist, workflow inventory, required artifact, test/lint result,
   runtime proof, or Evidence Index proof blocks READY.
-- Exit code `0` from the adapter is the only READY status. Any other exit code
+- Exit code `0` from the finalizer is the only READY status. Any other exit code
   means BLOCKED, regardless of the chat summary.
 
-The generic sandbox adapter verifies the workflow itself. A real product must
-replace `workflow/project/` with its technology adapter before claiming product
-test or runtime evidence. A workflow-only pass never claims product evidence.
+The local profile defines whether the adapter checks only workflow files or the
+product under review. In this repository `product` means the public manuscript
+and its examples; it never claims evidence about the closed source project.

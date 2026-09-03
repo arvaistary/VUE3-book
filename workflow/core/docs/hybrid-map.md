@@ -1,71 +1,49 @@
-# Hybrid Map — Spec-Kit phases ↔ Quality Gates
+# Hybrid Map — фазы и quality gates
 
-Универсальная карта. **Не зависит от стека.** Project-specific gates — в `workflow/project/docs/gates-extensions.md`.
+Эта карта показывает, что происходит на каждом этапе Spec-Kit Modern и где
+возникает блокирующая проверка.
 
 ## Фазы
 
-| # | Spec-Kit | Артефакт | Quality layer | Блокирующий? |
-|---|----------|----------|---------------|--------------|
-| 0 | `constitution` / principles | `.specify/memory/constitution.md`, `workflow/project/docs/principles/` | Контекст для всех фаз | — |
-| 1 | `start --full` или TASK-NN | `specs/…/spec.md` или `workflow/project/tasks/TASK-NN.md` | User stories, domain rules, workflow contract, expected diff | — |
-| 2 | `clarify` | обновлённый spec | Open questions закрыты | WARN если пропущен при full |
-| 3 | `plan` | `plan.md` | Affected areas, constraints | — |
-| 4 | `tasks` | `tasks.md` | Минимальные тесты, allowlist diff | — |
-| 5 | `analyze` | report в чат | Согласованность spec/plan/tasks | CRITICAL → не implement |
-| 6 | implement | код | `workflow/project/docs/principles/` | — |
-| 7 | adversarial review | review evidence | Scope, actor matrix, adversarial inputs, live side effects, concurrency and evidence integrity | **BLOCK** |
-| 8 | `hybrid-finalize` | DoD report | Gates A–H (применимые) + self-audit | **BLOCK** |
+| # | Фаза | Артефакт | Что проверяется | Блокирует? |
+|---|------|----------|-----------------|------------|
+| 0 | `constitution` | `.specify/memory/constitution.md` и principles | общие правила | — |
+| 1 | `start --full` или brief | `spec.md` или `TASK-NN.md` | границы, контракт, ожидаемый diff | — |
+| 2 | `clarify` | обновлённый `spec.md` | закрытые решения | предупреждение при пропуске |
+| 3 | `plan` | `plan.md` | области изменения и ограничения | — |
+| 4 | `tasks` | `tasks.md` | действия, тесты и allowlist | — |
+| 5 | `analyze` | отчёт в чате | согласованность артефактов | критические находки |
+| 6 | `implement` | код и тесты | выполнение плана | — |
+| 7 | adversarial review | review evidence | scope, права, ошибки, side effects, concurrency | **да** |
+| 8 | `hybrid-finalize` | DoD report | применимые gates и self-audit | **да** |
 
-## Canonical contract
+## Канонический контракт
 
-В full mode `specs/…/spec.md` становится единственным canonical contract после
-`clarify`; TASK-NN остаётся входным brief и не подменяет его на finalize.
-При подготовке из TASK-NN агент переносит его контракт в `spec.md` до
-`clarify`. Если TASK-NN продолжает использоваться как mirror, в нём должен
-быть явно указан тот же workflow contract.
+В full-режиме после `clarify` единственным контрактом становится
+`specs/<work-item>/spec.md`. Brief остаётся исходным описанием и не подменяет
+каноническую спецификацию.
 
-## Lite mode (`start` без `--full`)
+## Lite-режим
 
-| Шаг | Артефакт | Gates до implement |
-|-----|----------|-------------------|
-| start lite | `plan.md`, `tasks.md` | Escalation triggers → рекомендовать `--full` |
-| implement | код | principles |
-| hybrid-finalize | DoD report | все применимые gates |
+| Шаг | Артефакт | Проверка до реализации |
+|-----|----------|------------------------|
+| `start` без `--full` | `plan.md`, `tasks.md` | решение, не нужен ли full-режим |
+| `implement` | код и тесты | локальные principles |
+| `hybrid-finalize` | DoD report | все применимые gates |
 
-## Матрица gates по типу задачи
+## Gates по типу задачи
 
-| Тип | Gates |
-|-----|-------|
-| Любая | A, G + DoD report |
-| API mutating | + B, C |
-| Workflow / freeze | + D |
-| Side effect/handler в спеке | + E |
-| Batch endpoint | + F |
-| Executable E2E artifact в спеке / diff | + H |
+| Тип задачи | Дополнительные gates |
+|------------|----------------------|
+| Любая | scope, tests, DoD report |
+| API или мутация | контракт, права, границы |
+| Изменение состояния | mutation inventory и переходы |
+| Side effect или handler | timing, rollback и wiring |
+| Batch или race-sensitive операция | порядок блокировок и runtime proof |
+| E2E-сценарий | исполняемый сценарий и fixtures |
 
-Детали gate B–H — в `workflow/project/docs/gates-extensions.md`.
+## Что дают два слоя
 
-## Что Spec-Kit даёт сверх gates
-
-- Структурированные артефакты в `specs/`.
-- `clarify` — формализованные вопросы до кода.
-- `analyze` — поиск пробелов в спеке **до** implement.
-- Workflow contract — явное решение о mutation surface и обязательные
-  inventory/verification sections до implement.
-- `finalize` — проверка tasks vs код (базовая).
-- Durable memory в `.specify/memory/`.
-- Adversarial review — post-implementation pass against recurring scope,
-  workflow, security and evidence failure classes.
-
-## Что gates дают сверх Spec-Kit
-
-- MR hygiene (Gate A).
-- API contract consistency (B).
-- Auth matrix ≤2 Policy (C).
-- Mutation inventory + freeze + pending child (D).
-- Side effect timing, handler naming and transport proof (E).
-- Batch ordering (F).
-- E2E workflow branches and fixture provenance (H).
-- Self-audit по каталогу типичных ошибок.
-
-**Гибрид = оба слоя.** `hybrid-finalize` объединяет `finalize` + gates.
+Общие проверки обеспечивают структуру контракта, provenance, scope, Evidence
+Index и fail-closed поведение. Локальные проверки дополняют их командами и
+правилами этого репозитория. Вместе они дают единую проверку готовности.

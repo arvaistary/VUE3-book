@@ -221,16 +221,25 @@ artifact:book_spec
 artifact:draft_manuscript
 artifact:public_manuscript
 AGENTS.md
+workflow/README.md
+workflow/core/
+workflow/project/
+.agents/
+.codex/
+.cursor/
+.specify/scripts/bash/
+.specify/templates/
 ~~~
 
 ## Exclude from diff
 
 ~~~text
-workflow/core/
-.specify/
-.agents/
-.codex/
-.cursor/
+.specify/.active-work-item.json
+.specify/external-project.toml
+.specify/no-trace-patterns.toml
+.env
+.env.*
+.DS_Store
 ~~~
 
 ## Hybrid required artifacts

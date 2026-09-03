@@ -12,15 +12,16 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Hybrid delivery note
 
-This command is a compatibility alias for the Umbrella artifact review. This
-repository layers the strict Hybrid workflow over Umbrella Spec-Kit, so this
-command MUST NOT claim READY on its own. After the artifact review, it MUST
-continue with `/speckit.hybrid-finalize` and report BLOCKED if that command
-cannot be executed or exits non-zero. Only the Hybrid adapter's exit code `0`
-is a delivery decision.
+This command is a compatibility alias for the ordinary artifact review. This
+repository uses a stricter Hybrid workflow, so this command MUST NOT claim READY
+on its own. After the artifact review, it MUST continue with
+`/speckit.hybrid-finalize` and report BLOCKED if that command cannot be executed
+or exits non-zero. Only the finalizer's exit code `0` is a delivery decision.
 
-The final report must include the exact Hybrid adapter command, its exit code,
-and the selected evidence mode (`product` or `workflow-only`).
+The final report must include the exact Hybrid finalizer command, its exit code,
+and the EVIDENCE_MODE selected by `workflow/project/technology-profile.env`.
+For this book the profile uses `EVIDENCE_MODE=product`: evidence concerns the
+manuscript and its examples, not the closed source project.
 
 ## Outline
 

@@ -46,11 +46,11 @@ grep -Eq '^# [^[]+$' "$CONSTITUTION_FILE" || {
     printf 'FAIL: constitution title is missing or unresolved\n' >&2
     FAILURES=$((FAILURES + 1))
 }
-grep -Eq '^## Core Principles$' "$CONSTITUTION_FILE" || {
-    printf 'FAIL: constitution must define Core Principles\n' >&2
+grep -Eq '^## (Core Principles|Основные принципы)$' "$CONSTITUTION_FILE" || {
+    printf 'FAIL: constitution must define its core principles\n' >&2
     FAILURES=$((FAILURES + 1))
 }
-grep -Eq '^\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+ \| \*\*Ratified\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2} \| \*\*Last Amended\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2}$' "$CONSTITUTION_FILE" || {
+grep -Eq '^((\*\*Version\*\*: [0-9]+\.[0-9]+\.[0-9]+ \| \*\*Ratified\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2} \| \*\*Last Amended\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2})|(\*\*Версия\*\*: [0-9]+\.[0-9]+\.[0-9]+ \| \*\*Утверждена\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2} \| \*\*Изменена\*\*: [0-9]{4}-[0-9]{2}-[0-9]{2}))$' "$CONSTITUTION_FILE" || {
     printf 'FAIL: constitution version and dates must be concrete ISO/semver values\n' >&2
     FAILURES=$((FAILURES + 1))
 }

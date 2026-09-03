@@ -175,7 +175,7 @@ WORKFLOW_CORE_DIR="$REPO_ROOT/workflow/core"
 if [[ -f "$WORKFLOW_CORE_DIR/artifact-context.sh" ]]; then
     source "$WORKFLOW_CORE_DIR/artifact-context.sh"
     if ! artifact_context_load "$REPO_ROOT"; then
-        echo "Error: Could not resolve the product Git worktree." >&2
+        echo "Error: Could not resolve the Git worktree being checked." >&2
         exit 1
     fi
 else

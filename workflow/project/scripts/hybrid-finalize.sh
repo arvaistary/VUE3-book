@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Technology-neutral project adapter for the Umbrella + Hybrid sandbox.
-# Real products replace this adapter, not workflow/core.
+# Локальный финализатор Spec-Kit Modern.
+# Он добавляет проверки этого репозитория и передаёт решение общему core.
 
 set -uo pipefail
 

@@ -1,100 +1,73 @@
-# Hybrid project-adapter contract
+# Контракт локального слоя
 
-`workflow/core/` is the portable process. It must not know which framework,
-database, language, test runner, transport, or E2E client the product uses.
-Those decisions belong to a project adapter and its replaceable technology
-profile.
+`workflow/core/` содержит общие правила процесса, а `workflow/project/` —
+команды и проверки, необходимые именно этому репозиторию. Такое разделение
+помогает не смешивать универсальные инварианты с конкретными командами.
 
-## Boundary
+## Граница ответственности
 
-| Layer | Owns | Must not own |
-|---|---|---|
-| `workflow/core/` | Spec-Kit lifecycle, v2 contract shape, scope, clean-worktree provenance, shared report/evidence schema | framework commands, source paths, database names, framework assertions |
-| `technology-profile.env` | trusted commands, runtime labels, artifact-role mappings and runner paths | secrets, domain decisions, semantic authorization or workflow rules |
-| `workflow/project/` | stack-specific runtime selection, structural evidence and project principles | redefining the shared contract or weakening core gates |
-| task `spec.md` | domain behavior, state/auth/privacy decisions and named proof obligations | assumptions about an adapter that are not recorded in the profile |
+| Слой | Отвечает за | Не должен делать |
+|------|-------------|-----------------|
+| `workflow/core/` | lifecycle, контракт v2, scope, provenance, общий формат отчёта | зависеть от конкретного языка или приложения |
+| `technology-profile.env` | доверенные команды, runtime-метки и роли артефактов | хранить секреты или решения предметной области |
+| `workflow/project/` | команды, локальные проверки и принципы проекта | переопределять общие gates |
+| `spec.md` задачи | поведение, состояния, права, приватность и доказательства | оставлять важные решения в догадках |
 
-## Adapter interface
+## Интерфейс финализатора
 
-A project adapter exposes the same user-facing close-out operation:
+Локальный финализатор принимает:
 
 ```text
 hybrid-finalize.sh [--task-spec PATH] --report PATH
-    [--base-ref REF] [--runtime auto|local|project-runtime]
+    [--base-ref REF] [--runtime auto|local]
     [--technology-profile PATH]
 ```
 
-The adapter must:
+Он обязан:
 
-1. resolve the active canonical `spec.md` and immutable `base_ref`;
-2. validate the profile before executing any profile command;
-3. select a runtime without silently downgrading a required production-like
-   proof to a local-only or skipped run;
-4. run stack-specific semantic checks and required live/concurrency/E2E proofs;
-5. call `workflow/core/hybrid-finalize.sh` with the selected test/lint commands,
-   runtime label, evidence mode, and current E2E/concurrency command. If the
-   product is external, pass the effective command including its product-root
-   working-directory prefix so the evidence checker validates what actually ran;
-6. return non-zero when either its checks or the core finalizer fail.
+1. найти активную каноническую спецификацию и `base_ref`;
+2. проверить профиль до выполнения его команд;
+3. запустить обязательные локальные проверки;
+4. передать результат в `workflow/core/hybrid-finalize.sh`;
+5. вернуть ненулевой код, если ошиблась локальная или общая проверка.
 
-The core runner is the final common gate. An adapter may add checks, but must
-not replace or reinterpret core results.
+Общий финализатор остаётся последним gate. Локальный слой может добавить
+проверки, но не может заменить или переименовать результат core.
 
-## Profile rules
+## Правила profile
 
-The profile is data in a strict `KEY=value` format. It is read by
-`technology-profile.sh`, never sourced as shell code. Commands are still
-trusted repository inputs and are deliberately executed by the adapter; do not
-put user-controlled values or secrets into the file.
+Profile — это файл данных формата `KEY=value`. Его читает
+`technology-profile.sh`; он не должен выполняться как shell-код. Команды в нём
+считаются доверенными командами репозитория, поэтому в profile нельзя помещать
+ввод пользователя или секреты.
 
-At minimum the adapter profile identifies `PROFILE_VERSION`, `PROFILE_ID`, the
-local/project-runtime test and lint commands, and any artifact roles used by
-new task specs. Optional keys describe concurrency and E2E runners. A profile
-may use any runtime model and names; those are adapter vocabulary, not a core
-requirement.
-
-`EVIDENCE_MODE` is required for the finalizer boundary:
-
-- `product` means the commands produce evidence about the product repository.
-- `workflow-only` means the commands validate only the workflow installation;
-  output must be labelled accordingly and must not be reported as product
-  tests, runtime, E2E, or concurrency evidence.
-
-`COMMAND_WORKDIR` is also required and is either `spec` or `product`. The
-adapter must execute commands from the selected root; external product checks
-must use `product` so that relative fixtures and test paths resolve in the
-bound product worktree.
-
-## Evidence interface
-
-The core checker consumes a DoD report with:
+Обязательные поля:
 
 ```text
-Hybrid Finalize Report
-## Quality gates
-## Evidence index
-| Marker | Command / test / runtime evidence |
+PROFILE_VERSION=1
+PROFILE_ID=<stable id>
+EVIDENCE_MODE=workflow-only
+COMMAND_WORKDIR=spec
 ```
 
-Каждый обязательный маркер должен иметь в таблице Evidence Index отдельную
-непустую строку с проверяемым подтверждением. Adapter добавляет проверки,
-специфичные для технологии, но если он сам повторно запускает обязательный
-concurrency или E2E-сценарий, в отчёте нужно указать точную текущую команду и
-её результат.
+`workflow-only` означает, что команды проверяют процесс и его файлы. В отчёте
+такой режим нельзя выдавать за тест прикладного поведения.
 
-## v2.1 high-risk extensions
+## Evidence Index
 
-New high-risk work items should declare `CONTRACT_RECONCILIATION: required` and,
-when authorization has independent actor/operation branches,
-`AUTH_MATRIX_ROW_COVERAGE: required`. The core validates the declaration,
-table shape and decided cells. The project adapter must add the semantic
-checks available in its stack, including bidirectional matrix ↔ case-ID
-mapping and concrete named test/assertion references. Older v2 specs that omit
-these optional declarations remain valid during migration.
+В отчёте должны быть разделы `## Quality gates` и `## Evidence index`.
+Каждый обязательный маркер связывается с отдельной строкой таблицы:
 
-## Compatibility policy
+```markdown
+| Маркер | Команда / тест / фактический вывод |
+|--------|------------------------------------|
+| WORKFLOW_CONTRACT=PASS | bash workflow/core/check-workflow-contract.sh ... |
+```
 
-Literal paths in existing task briefs remain valid. New briefs should prefer
-`artifact:<role>` and runtime-neutral wording. A migration is complete only
-when at least one work item on the replacement stack passes the same core
-contract, scope, evidence and post-commit gates.
+Одного текста `PASS`, наличия файла или старого отчёта недостаточно.
+
+## Расширения v2.1
+
+Для сложных задач можно объявить `CONTRACT_RECONCILIATION: required` и
+`AUTH_MATRIX_ROW_COVERAGE: required`. Core проверяет структуру деклараций и
+таблиц, а конкретный тест или assertion должен быть указан в самой задаче.

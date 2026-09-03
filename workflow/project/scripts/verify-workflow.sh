@@ -9,9 +9,11 @@ bash "$REPO_ROOT/workflow/core/profile-contract-test.sh" \
 
 for script in \
     "$REPO_ROOT/workflow/core/check-evidence-index.sh" \
+    "$REPO_ROOT/workflow/core/check-evidence-index-test.sh" \
     "$REPO_ROOT/workflow/core/check-constitution.sh" \
     "$REPO_ROOT/workflow/core/check-no-trace.sh" \
     "$REPO_ROOT/workflow/core/check-workflow-contract.sh" \
+    "$REPO_ROOT/workflow/core/check-workflow-contract-test.sh" \
     "$REPO_ROOT/workflow/core/hybrid-finalize.sh" \
     "$REPO_ROOT/workflow/core/artifact-context.sh" \
     "$REPO_ROOT/workflow/core/configure-external-artifacts.sh" \
@@ -32,32 +34,30 @@ test -f "$REPO_ROOT/workflow/core/README.md"
 test -f "$REPO_ROOT/workflow/core/docs/README.md"
 test -f "$REPO_ROOT/workflow/project/README.md"
 test -f "$REPO_ROOT/workflow/project/docs/README.md"
+test -f "$REPO_ROOT/workflow/project/docs/agent-dod.md"
+test -f "$REPO_ROOT/workflow/project/docs/gates-extensions.md"
+test -f "$REPO_ROOT/workflow/project/docs/principles/README.md"
+test -f "$REPO_ROOT/workflow/project/docs/technology-integrity-report.md"
 test -f "$REPO_ROOT/workflow/project/scripts/README.md"
 test -f "$REPO_ROOT/workflow/project/templates/README.md"
 test -f "$REPO_ROOT/workflow/project/templates/stack.md"
 test -f "$REPO_ROOT/workflow/project/templates/technology-profile.env.example"
 test -f "$REPO_ROOT/workflow/project/templates/gates-extensions.md"
 test -f "$REPO_ROOT/workflow/project/templates/agent-dod.md"
-test -f "$REPO_ROOT/workflow/project/templates/technology-portability-report.md"
+test -f "$REPO_ROOT/workflow/project/templates/technology-integrity-report.md"
 test -f "$REPO_ROOT/workflow/project/templates/principles/README.md"
 test -f "$REPO_ROOT/workflow/project/templates/principles/best-practices.md"
 test -f "$REPO_ROOT/workflow/project/templates/principles/anti-patterns.md"
 test -f "$REPO_ROOT/workflow/project/templates/principles/workflow-patterns.md"
 test -f "$REPO_ROOT/workflow/project/templates/principles/code-review-mistakes.md"
-test -f "$REPO_ROOT/workflow/project/docs/agent-dod.md"
-test -f "$REPO_ROOT/workflow/project/docs/gates-extensions.md"
-test -f "$REPO_ROOT/workflow/project/docs/principles/README.md"
-test -f "$REPO_ROOT/workflow/project/stack.md"
-test -f "$REPO_ROOT/workflow/project/docs/technology-portability-report.md"
-test -x "$REPO_ROOT/workflow/project/scripts/check-book.sh"
 test -f "$REPO_ROOT/workflow/project/tasks/README.md"
 test -f "$REPO_ROOT/.specify/memory/context.md"
 test -f "$REPO_ROOT/.specify/memory/constitution.md"
-test -f "$REPO_ROOT/workflow/project/umbrella-source.env"
+test -f "$REPO_ROOT/workflow/project/stack.md"
+test -x "$REPO_ROOT/workflow/project/scripts/check-book.sh"
 test -x "$REPO_ROOT/workflow/core/check-evidence-index-test.sh"
 test -x "$REPO_ROOT/workflow/core/check-workflow-contract-test.sh"
-grep -Eq '^UPSTREAM_COMMIT=[0-9a-f]{40}$' "$REPO_ROOT/workflow/project/umbrella-source.env"
-grep -Eq '^SPECIFY_CLI_VERSION=[0-9]+\.[0-9]+\.[0-9]+$' "$REPO_ROOT/workflow/project/umbrella-source.env"
+
 bash "$REPO_ROOT/workflow/core/check-constitution.sh" \
     --file "$REPO_ROOT/.specify/memory/constitution.md"
 bash "$REPO_ROOT/workflow/core/check-evidence-index-test.sh"
@@ -68,7 +68,6 @@ rg -q 'base_ref' "$REPO_ROOT/.specify/scripts/bash/start-work-item.sh"
 rg -q 'WORKFLOW_CONTRACT_VERSION' "$REPO_ROOT/workflow/core/check-workflow-contract.sh"
 rg -q 'check-no-trace.sh' "$REPO_ROOT/workflow/core/hybrid-finalize.sh"
 rg -q 'workflow-only' "$REPO_ROOT/workflow/core/hybrid-finalize.sh"
-bash "$REPO_ROOT/workflow/project/scripts/check-book.sh"
 
 while IFS= read -r memory_file; do
     if rg -n '(^|[[:space:]])TODO:|NEEDS CLARIFICATION|\[[A-Z][A-Z0-9_ -]*\]' "$memory_file" >/dev/null; then
@@ -77,4 +76,6 @@ while IFS= read -r memory_file; do
     fi
 done < <(find "$REPO_ROOT/.specify/memory" -type f -name '*.md' -print)
 
-printf 'PASS: Umbrella + Hybrid workflow smoke checks\n'
+bash "$REPO_ROOT/workflow/project/scripts/check-book.sh"
+
+printf 'PASS: Spec-Kit Modern book workflow smoke checks\n'

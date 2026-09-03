@@ -1,54 +1,49 @@
-# Hybrid workflow: навигация
+# Карта workflow
 
-`workflow/` — слой процесса поверх Umbrella Spec-Kit. Здесь нет кода
-продукта; каталог предназначен для повторяемого выполнения задач и проверки
-доказательств перед merge.
-
-В этом документе **gate** означает обязательную проверку, **маркер** — строку
-`NAME=PASS` в DoD report, а **Evidence Index** — таблицу с доказательством для
-каждого маркера. Под «доказательством» понимается текущий запуск команды,
-конкретный тест или фактический вывод runtime, а не утверждение агента в чате.
+Каталог `workflow/` содержит проверяемый процесс работы над задачей. Здесь
+описано, где лежат правила, как проходят проверки и как принимается решение
+`READY`.
 
 ## Структура
 
 ```text
 workflow/
 ├── README.md                         этот файл
-├── core/                             универсальный слой
+├── core/                             общие правила и gates
 │   ├── README.md                     карта core-файлов
-│   ├── docs/                         контракты и инструкции core
-│   │   ├── README.md                 карта документов
-│   │   ├── hybrid-map.md             фазы Spec-Kit ↔ gates
-│   │   ├── task-template.md          шаблон TASK-NN
-│   │   ├── project-adapter-contract.md граница core ↔ adapter
-│   │   └── adversarial-review.md     review после реализации
+│   ├── docs/                         контракты и инструкции
 │   ├── check-*.sh                    fail-closed проверки
-│   ├── *-test.sh                     регрессионные tests checker-ов
-│   └── hybrid-finalize.sh             общий runner финализации
-└── project/                          адаптер конкретного проекта
-    ├── README.md                     как заменить адаптер проекта
-    ├── docs/                         DoD, gates и принципы adapter-а
-    │   ├── README.md                 карта документов adapter-а
-    ├── technology-profile.env        команды и роли артефактов
-    ├── scripts/                      исходники adapter-скриптов
-    │   └── README.md                 правила для этих исходников
-    ├── templates/                    заготовки документов нового adapter-а
-    ├── tasks/                        briefs и шаблоны задач
-    ├── *.sh                           стабильные совместимые entrypoints
-    ├── verify-workflow.sh            smoke-проверка установки
-    ├── lint-workflow.sh              shell/whitespace-проверка
-    └── hybrid-finalize.sh             входная точка project adapter
+│   ├── *-test.sh                     регрессионные тесты проверок
+│   └── hybrid-finalize.sh             общий финализатор
+└── project/                          команды и правила этого репозитория
+    ├── README.md                     карта локального слоя
+    ├── docs/                         DoD, gates и принципы
+    ├── scripts/                      исходники локальных проверок
+    ├── templates/                    шаблоны документов
+    ├── technology-profile.env        доверенный профиль команд
+    ├── verify-workflow.sh             структурная проверка
+    ├── lint-workflow.sh               shell и whitespace-проверка
+    └── hybrid-finalize.sh             точка входа финализатора
 ```
 
-Исполняемые файлы в корне `core/` и `project/` оставлены на стабильных путях:
-на них ссылаются slash-команды, skills, profile и старые TASK briefs. Это
-часть публичного adapter contract, а не случайное смешение документации и
-скриптов. Человеческая навигация собрана в README, а предметные задачи — в
-`project/tasks/`.
+Исполняемые файлы в корне `core/` и `project/` находятся на стабильных путях.
+На них ссылаются команды, skills и профиль. Документы сгруппированы в `docs/`,
+а briefs задач — в `project/tasks/`.
 
-## Рекомендуемый сценарий
+## Ежедневная проверка
 
-### Полный Spec-Kit work-item
+Из корня репозитория:
+
+```bash
+bash workflow/project/verify-workflow.sh
+bash workflow/project/lint-workflow.sh
+```
+
+Первая команда проверяет наличие обязательных файлов, constitution, профиль,
+контракты и регрессионные сценарии. Вторая проверяет синтаксис shell-скриптов и
+whitespace. Обе команды относятся только к самому workflow.
+
+## Полная задача
 
 ```text
 /speckit.start --full "описание"
@@ -60,59 +55,58 @@ workflow/
 /speckit.hybrid-finalize
 ```
 
-`/speckit.implement` сам выполняет обязательный preflight. Для диагностики
-или CI можно выполнить его явно:
+После реализации:
 
-```bash
-bash .specify/scripts/bash/check-prerequisites.sh \
-  --json --require-tasks --include-tasks
-bash workflow/core/check-workflow-contract.sh \
-  --task-spec specs/<work-item>/spec.md
-```
-
-После реализации нужно провести review по
-[`core/docs/adversarial-review.md`](core/docs/adversarial-review.md). Затем
-завершите все пункты `tasks.md`, создайте DoD report и для каждого обязательного
-маркера укажите в Evidence Index, какая команда или какой конкретный тест его
-подтверждает. После этого закоммитьте только allowlist и оставьте worktree
-чистым. Затем запускается:
+1. Проведите review по
+   [`core/docs/adversarial-review.md`](core/docs/adversarial-review.md).
+2. Заполните DoD report и таблицу Evidence Index.
+3. Закоммитьте только файлы из allowlist.
+4. Убедитесь, что рабочая копия чистая.
+5. Запустите локальный финализатор:
 
 ```bash
 bash workflow/project/hybrid-finalize.sh \
   --task-spec specs/<work-item>/spec.md \
-  --report /absolute/path/to/hybrid-finalize-report.md
+  --report /absolute/path/to/hybrid-finalize-report.md \
+  --runtime auto \
+  --technology-profile workflow/project/technology-profile.env
 ```
 
-### TASK-NN brief
+Код выхода `0` — единственное основание для `READY`. Отчёт не заменяет
+коммит, а строка `PASS` без команды или теста не заменяет доказательство.
 
-Для задачи без полного work-item:
+## Задача по brief
 
-1. Прочитайте `workflow/project/tasks/TASK-NN-*.md`.
-2. Зафиксируйте `base_ref`, allowlist, denylist и таблицу mutation inventory —
-   список всех операций, меняющих данные, с решением для freeze/pending/delete.
-3. Реализуйте задачу и тесты; для каждого обязательства сохраните проверяемое
-   доказательство по DoD.
-4. Проведите adversarial review, закоммитьте allowlist.
-5. Запустите тот же project finalizer с `--task-spec` на brief.
+Для небольшой задачи можно использовать файл
+`workflow/project/tasks/TASK-NN-*.md`. Перед реализацией в нём должны быть:
 
-В полном режиме канонический контракт после `clarify` — `spec.md`; TASK-NN
-остаётся только входным brief.
+1. границы задачи и ожидаемый diff;
+2. mutation inventory — список операций, меняющих состояние;
+3. allowlist и denylist;
+4. обязательные тесты и Evidence Index.
 
-## Перенос на другой стек
+В full-режиме после `clarify` каноническим документом становится
+`specs/<work-item>/spec.md`.
 
-Скопируйте `core/` целиком. В `project/` замените текущий адаптер на адаптер
-проекта: профиль технологий, DoD, принципы, gates, команды тестов и runtime.
-Для структуры документов используйте `project/templates/`: там есть заготовки
-`stack.md`, profile, gates, DoD, portability report и principles.
-Core не должен узнавать названия технологий. Если workflow хранится sidecar-ом,
-настройте привязку:
+## Границы core и project
 
-```bash
-bash workflow/core/configure-external-artifacts.sh \
-  --product-root /absolute/path/to/product
-```
+`workflow/core/` отвечает за единые инварианты: provenance, scope, структуру
+контракта, Evidence Index и fail-closed поведение. `workflow/project/` содержит
+команды и правила, необходимые именно этому репозиторию. Изменение локальной
+проверки не должно ослаблять core.
 
-`workflow-only` в этом репозитории означает, что product test, E2E,
-concurrency и runtime evidence не заявляются. Для настоящего продукта adapter
-должен перейти на `EVIDENCE_MODE=product` и вернуть доказательства именно из
-его toolchain.
+## Режим хранения артефактов
+
+По умолчанию workflow работает в режиме `in-repo`: артефакты задачи находятся
+в текущем Git-репозитории. Для изолированного рабочего каталога предусмотрен
+режим `external`; его правила описаны в
+[`core/docs/external-artifacts.md`](core/docs/external-artifacts.md). В обоих
+режимах provenance и границы изменений проверяются явно.
+
+## Результат проверки
+
+Режим evidence определяется профилем в workflow/project/technology-profile.env.
+В этой книге используется EVIDENCE_MODE=product: команды подтверждают
+рукопись и её автономные примеры как продукт, но не заявляют доказательство
+поведения закрытого приложения. Режим workflow-only подтверждает только
+целостность workflow.

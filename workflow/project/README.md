@@ -1,63 +1,45 @@
-# Адаптер проекта
+# Адаптер проекта книги
 
-Этот каталог — заменяемая граница между универсальным Hybrid core и конкретным
-проектом. В этом репозитории нет прикладного кода, поэтому адаптер работает в режиме
-`EVIDENCE_MODE=workflow-only`: он доказывает, что Umbrella + Hybrid установлены
-и согласованы, но не изображает smoke-проверки workflow тестами приложения.
+Адаптер связывает универсальный workflow/core/ с Markdown-рукописью. Он
+проверяет структуру книги, публичную границу, редакционные правила и
+воспроизводимость подготовки. Закрытый исходный проект в проверки не
+подключается.
 
 ## Файлы адаптера
 
-- `technology-profile.env` — доверенный машинно-читаемый профиль команд,
-  окружений запуска и ролей артефактов;
-- `docs/agent-dod.md` — минимальный DoD для этого репозитория и требования к
-  адаптеру продукта;
-- `docs/principles/` — место для conventions, security и anti-patterns проекта;
-- `docs/gates-extensions.md` — место для stack-specific и domain-specific gates;
-- `tasks/` — входные briefs TASK-NN и инструкция по их использованию;
-- `templates/` — заготовки всех документов нового адаптера;
-- `verify-workflow.sh` — структурная smoke-проверка;
-- `lint-workflow.sh` — проверка shell-скриптов и whitespace;
-- `hybrid-finalize.sh` — project entrypoint для общей fail-closed финализации.
+- technology-profile.env — доверенный профиль команд и ролей артефактов;
+- stack.md — формат и структура книги;
+- docs/agent-dod.md — критерии готовности;
+- docs/gates-extensions.md — дополнительные gates книги;
+- docs/principles/ — постоянные правила и антипаттерны;
+- docs/technology-integrity-report.md — границы и доказательства адаптера;
+- scripts/check-book.sh — проверка рукописи;
+- verify-workflow.sh и lint-workflow.sh — проверки установки и структуры;
+- hybrid-finalize.sh — точка входа в общий fail-closed финализатор.
 
-Команды запускаются из корня репозитория:
+## Команды
 
-```bash
+Из корня книги:
+
+~~~bash
 bash workflow/project/verify-workflow.sh
 bash workflow/project/lint-workflow.sh
-```
+bash workflow/project/scripts/check-book.sh
+~~~
 
-## Как заменить adapter для продукта
+Профиль использует EVIDENCE_MODE=product: команда проверки подтверждает
+рукопись как продукт. Это не тестирование поведения закрытого приложения.
+Нельзя объявлять READY только по строкам PASS из документа; решение принимает
+workflow/project/hybrid-finalize.sh с кодом выхода 0.
 
-Сохраните `workflow/core/` без технологических деталей и замените содержимое
-этого слоя под язык, framework, database, test runner, runtime, E2E и
-concurrency tooling проекта. Обязательный минимум:
+## Порядок настройки
 
-1. валидируемый `technology-profile.env`;
-2. реальные команды unit/integration тестов и lint;
-3. production-like runtime proof для concurrency-обязательств;
-4. исполняемые E2E/security проверки, если они объявлены задачей;
-5. project-specific DoD, gates и semantic evidence checks.
+1. Прочитайте workflow/core/docs/ и этот каталог.
+2. Проверьте technology-profile.env.
+3. Проверьте constitution и каноническую спецификацию work item-а.
+4. Выполните проверки адаптера.
+5. Для содержательной задачи используйте только реальные product evidence;
+   workflow-only не должен выдаваться за проверку книги.
 
-Профиль содержит команды, которым доверяет репозиторий. Не помещайте туда
-секреты или пользовательский ввод. Для настоящего проекта установите
-`EVIDENCE_MODE=product`; результат `workflow-only` никогда не должен считаться
-доказательством поведения продукта.
-
-Для новых high-risk задач включайте v2.1-поля:
-
-```text
-CONTRACT_RECONCILIATION: required
-AUTH_MATRIX_ROW_COVERAGE: required
-```
-
-Текущий адаптер проверяет только общий формат этих деклараций и
-таблиц. Имена тестов, состояние базы, покрытие всех вариантов прав и фактическое
-поведение должны проверяться адаптером, заменённым под конкретный проект.
-
-## Шаблоны для нового adapter-а
-
-Перед первым переносом скопируйте заготовки из
-`workflow/project/templates/`. В README этого каталога указана роль каждого
-файла. Сначала заполните `stack.md`, profile и gates, затем DoD и principles;
-portability report заполняется после smoke work-item и фиксирует, что именно
-было реально проверено, какими командами и в каком окружении.
+Локальные проверки могут добавлять ограничения, но не могут ослаблять
+provenance, scope, workflow contract или Evidence Index из workflow/core/.

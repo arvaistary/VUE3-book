@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Resolve the workflow artifact root and the product Git worktree.
+# Resolve the workflow artifact root and the Git worktree being checked.
 # This file is intentionally framework- and runtime-neutral.
 
 artifact_canonical_dir() {
@@ -71,7 +71,7 @@ artifact_context_load() {
     }
     actual_product_git_root="$(git -C "$ARTIFACT_PRODUCT_ROOT" rev-parse --show-toplevel 2>/dev/null || true)"
     actual_product_git_root="$(artifact_canonical_dir "$actual_product_git_root")" || {
-        printf 'FAIL: external product root is not inside a Git worktree: %s\n' "$ARTIFACT_PRODUCT_ROOT" >&2
+        printf 'FAIL: isolated checked root is not inside a Git worktree: %s\n' "$ARTIFACT_PRODUCT_ROOT" >&2
         return 1
     }
     [[ "$declared_product_git_root" == "$actual_product_git_root" ]] || {

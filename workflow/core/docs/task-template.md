@@ -1,11 +1,11 @@
 # TASK-NN — Краткое название
 
-> **Шаблон (универсальный).** Скопируйте → `workflow/project/tasks/TASK-NN-….md`.
-> Для Spec-Kit full mode — тот же контент в `spec.md` work-item.
+> **Шаблон brief.** Скопируйте его в `workflow/project/tasks/TASK-NN-….md`.
+> Для full-режима используйте тот же контракт в `spec.md` work-item.
 
-**Проект:** `<repo-name>`
+**Work-item:** `<название задачи>`
 **Статус:** draft | in progress | done
-**Workflow:** да/нет — если да, читать project workflow-patterns
+**Workflow:** да/нет — если да, прочитайте `workflow/project/docs/principles/`
 
 ---
 
@@ -16,7 +16,7 @@
 | Spec | этот файл (или `specs/…/spec.md`) |
 | Principles | `workflow/project/docs/principles/` |
 | DoD | `workflow/project/docs/agent-dod.md` |
-| Hybrid map | `workflow/core/docs/hybrid-map.md` (hybrid repo) |
+| Hybrid map | `workflow/core/docs/hybrid-map.md` |
 
 ---
 
@@ -190,7 +190,7 @@ side-effect test.
 
 | Claim | Runtime and required proof |
 |-------|---------------------------|
-| lock / quota / race | actual project database runtime, no skipped-only PASS |
+| lock / quota / race | фактический runtime, skipped-only PASS запрещён |
 
 ## Adversarial review
 
@@ -215,7 +215,7 @@ accepted as non-blocking.
   binding, logging, and public-field constraints that must be verified.
 - **E2E scenario:** describe the shortest executable flow, including dynamic
   IDs/tokens and any negative branch that proves invalidation.
-- **E2E execution:** when `E2E_EXECUTION: required`, the project adapter must
+- **E2E execution:** when `E2E_EXECUTION: required`, the local finalizer must
   execute the declared scenario during finalize; a report copied from an
   earlier run is not independent evidence.
 
@@ -247,7 +247,7 @@ accepted as non-blocking.
 ```
 
 For paths that describe a stack-owned proof or runner artifact, prefer
-`artifact:<role>` and define its mapping in the project technology profile.
+`artifact:<role>` и задайте его mapping в локальном technology profile.
 Keep feature-specific domain paths literal when a broad role would weaken the
 allowlist or make evidence ambiguous. Existing literal paths are supported.
 
@@ -282,7 +282,7 @@ PRIVACY_BOUNDARY=PASS (when required)
 AUTH_MATRIX=PASS (when required)
 SIDE_EFFECT_WIRING=PASS (when side effects are required)
 CONCURRENCY_EVIDENCE=PASS (when concurrency is required)
-CONCURRENCY_RUNTIME=<adapter runtime> (when concurrency is required)
+CONCURRENCY_RUNTIME=<profile runtime> (when concurrency is required)
 CAPABILITY_SECURITY=PASS (when capability security is required)
 ADVERSARIAL_REVIEW=PASS
 CONTRACT_RECONCILIATION=PASS (when required)
@@ -296,7 +296,7 @@ CONTRACT_RECONCILIATION=PASS (when required)
 | 2 | 403 IDOR | |
 | 3 | 422 domain | |
 
-Команды и runtime — из technology profile project adapter-а.
+Команды и runtime берутся из локального technology profile.
 
 ---
 

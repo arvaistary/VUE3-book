@@ -1,48 +1,42 @@
-# Hybrid validation protocol
+# Протокол проверки workflow
 
-Портативный протокол проверки процесса. Он не предполагает конкретный
-framework, database, test runner или E2E-клиент. Технологические команды и
-proof adapters задаются в technology profile проекта.
+Этот протокол нужен, чтобы одинаково проверять процесс на разных задачах.
+Команды и результаты должны быть записаны в отчёте, а не восстановлены по
+памяти.
 
 ## Подготовка
 
-1. Зафиксировать одну модель агента и одинаковый prompt protocol, если
-   сравниваются несколько прогонов.
-2. Начать каждый work item с чистого worktree; `start-work-item.sh` фиксирует
-   immutable `base_ref`.
-3. Не передавать агенту private audit oracle, если измеряется способность
-   workflow самостоятельно находить дефекты.
+1. Начните задачу с чистой рабочей копии.
+2. Зафиксируйте `base_ref` через `start-work-item.sh`.
+3. Если сравниваются несколько прогонов, используйте одинаковое описание
+   задачи и одинаковый порядок команд.
+4. Не передавайте агенту скрытые результаты проверки: иначе будет измеряться
+   следование подсказкам, а не качество процесса.
 
-## Hybrid-only validation loop
+## Цикл проверки
 
-1. Создать work item через Spec-Kit `start --full` или использовать TASK-only
-   brief для небольшой задачи.
-2. Для full mode пройти `clarify → plan → tasks → analyze`; после `clarify`
-   canonical source — `spec.md`.
-3. Заполнить v2 workflow contract, mutation inventory и применимые расширения:
-   adversarial input profile, exact actor coverage и independent E2E runtime.
-4. Запустить contract checker до implementation.
-5. Реализовать код, тесты и необходимые runtime fixtures в пределах allowlist.
-6. Выполнить adversarial review и записать DoD report с Evidence index.
-7. Закоммитить только allowlisted implementation paths после `base_ref`.
-8. Запустить project adapter `/speckit.hybrid-finalize`. Exit code 0 — единственный
-   статус READY.
+1. Создайте full work-item или brief для небольшой задачи.
+2. В full-режиме пройдите `clarify → plan → tasks → analyze`.
+3. Заполните workflow contract, mutation inventory и применимые расширения.
+4. Запустите contract checker до реализации.
+5. Реализуйте задачу в пределах allowlist.
+6. Выполните adversarial review и заполните DoD report с Evidence Index.
+7. Закоммитьте разрешённые изменения после `base_ref`.
+8. Запустите `/speckit.hybrid-finalize`. Код выхода `0` — единственный статус
+   `READY`.
 
-## Acceptance metrics
+## Критерии
 
-| Metric | Required result |
-|--------|-----------------|
-| Contract | checker PASS before implementation |
-| Workflow | every mutation has state outcomes and named assertions |
-| Security | input/privacy/auth obligations are explicit and tested |
-| Runtime | required production-like proofs are executed by adapter |
-| Evidence | every marker links to current command, test or runtime output |
-| Scope | finalizer PASS; no denylist paths in feature commit |
-| Repeatability | same process succeeds on unrelated tasks |
+| Область | Что должно быть подтверждено |
+|---------|------------------------------|
+| Контракт | checker завершился с `PASS` до реализации |
+| Workflow | каждая мутация имеет состояния и именованные проверки |
+| Безопасность | права, приватность и опасные входы описаны и проверены |
+| Runtime | обязательные команды действительно запущены |
+| Evidence | каждый маркер связан с текущим запуском |
+| Scope | финализатор не нашёл лишних файлов |
+| Повторяемость | тот же порядок действий даёт тот же тип результата |
 
-## External review
-
-Independent review remains useful as a calibration signal. Its findings should
-be converted into reusable gates or profile checks only after the experiment;
-otherwise the next run measures compliance with hints instead of transfer of
-the workflow.
+Независимое ревью полезно как дополнительный источник замечаний. Его выводы
+нужно превращать в ясные правила и машинные проверки только после проверки
+фактической причины проблемы.

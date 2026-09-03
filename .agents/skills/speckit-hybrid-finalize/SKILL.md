@@ -1,6 +1,6 @@
 ---
 name: speckit-hybrid-finalize
-description: Close a work item with Umbrella Spec-Kit and fail-closed Hybrid gates.
+description: Close a work item with Spec-Kit Modern and fail-closed Hybrid gates.
 compatibility: Requires `.specify/` and `workflow/` in the project.
 metadata:
   author: hybrid-workflow
@@ -9,8 +9,8 @@ metadata:
 
 # Speckit Hybrid Finalize Skill
 
-Use this skill after implementation and before claiming READY. The base
-Umbrella `/speckit.finalize` review is not sufficient for delivery.
+Use this skill after implementation and before claiming READY. Review artifacts
+alone are not sufficient for delivery.
 
 1. Resolve and read the active canonical work-item artifacts.
 2. Run `workflow/core/docs/adversarial-review.md` and record findings.
@@ -18,13 +18,13 @@ Umbrella `/speckit.finalize` review is not sufficient for delivery.
    boundaries, required artifacts, and the task allowlist.
 4. Confirm the feature commit is after immutable `base_ref` and the worktree is
    clean.
-5. If `.specify/external-project.toml` exists, run
+5. If isolated artifact mode is enabled, run
    `workflow/core/check-no-trace.sh` and add `NO_TRACE=PASS` with the exact
-   command to the Evidence Index. Resolve Git provenance in the bound product
-   worktree, not in the sidecar spec root.
-6. Create the DoD report and Evidence Index. Include whether the adapter uses
-   `EVIDENCE_MODE=product` or the explicit sandbox-only
-   `EVIDENCE_MODE=workflow-only`.
+   command to the Evidence Index. Resolve provenance in the Git worktree whose
+   files are being checked.
+6. Create the DoD report and Evidence Index. Include the EVIDENCE_MODE selected
+   by `workflow/project/technology-profile.env`; for this book it is
+   `EVIDENCE_MODE=product` because the manuscript is the product being checked.
 7. Run:
 
 ```bash
@@ -34,8 +34,8 @@ bash workflow/project/hybrid-finalize.sh \
   --technology-profile workflow/project/technology-profile.env
 ```
 
-The adapter and core finalizer must exit with code `0`. Never convert skipped,
-unavailable, stale, or report-only evidence into PASS. Replace the generic
-project adapter with real technology commands before using this workflow for a
-product repository. A workflow-only pass confirms only the workflow
-installation; it is not product delivery evidence.
+The local and core finalizers must exit with code `0`. Never convert skipped,
+unavailable, stale, or report-only evidence into PASS. If a profile uses
+`workflow-only`, that pass confirms only workflow files and checks; this book
+uses `product` for manuscript and example checks, not for the closed source
+project.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Deterministic scanner for Spec-Kit/AI traces in an external product worktree.
-# It intentionally scans only product changes and never writes to that worktree.
+# Deterministic scanner for workflow traces in an isolated Git worktree.
+# It scans only the checked changes and never writes to that worktree.
 
 set -uo pipefail
 
@@ -43,7 +43,7 @@ fi
 
 CONFIG="$ARTIFACT_SPEC_ROOT/.specify/no-trace-patterns.toml"
 if [[ ! -f "$CONFIG" ]]; then
-    printf 'FAIL: external mode requires scanner config: %s\n' "$CONFIG" >&2
+    printf 'FAIL: isolated mode requires scanner config: %s\n' "$CONFIG" >&2
     exit 2
 fi
 

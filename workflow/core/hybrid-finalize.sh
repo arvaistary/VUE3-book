@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Core, fail-closed runner for Spec-Kit plus workflow gates.
-# The project adapter supplies the stack-specific test and lint commands.
+# The local layer supplies this repository's test and lint commands.
 
 set -uo pipefail
 
@@ -65,7 +65,7 @@ SCRIPT_DIR="$(CDPATH='' cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(CDPATH='' cd "$SCRIPT_DIR/../.." && pwd -P)"
 source "$SCRIPT_DIR/artifact-context.sh"
 if ! artifact_context_load "$REPO_ROOT"; then
-    fail 'could not resolve workflow artifact and product Git roots'
+    fail 'could not resolve workflow and checked Git roots'
     exit 1
 fi
 GIT_ROOT="$ARTIFACT_GIT_ROOT"
@@ -354,9 +354,9 @@ done <<< "$(artifact_git ls-files --others --exclude-standard -- "$PATHSPEC" | w
 NO_TRACE_ROOT_QUOTED="$(printf '%q' "$REPO_ROOT")"
 NO_TRACE_COMMAND="bash workflow/core/check-no-trace.sh --spec-root $NO_TRACE_ROOT_QUOTED"
 if bash "$REPO_ROOT/workflow/core/check-no-trace.sh" --spec-root "$REPO_ROOT"; then
-    [[ "$ARTIFACT_MODE" == external ]] && pass 'external no-trace scan' || pass 'no-trace scan (in-repo mode)'
+    [[ "$ARTIFACT_MODE" == external ]] && pass 'isolated no-trace scan' || pass 'no-trace scan (in-repo mode)'
 else
-    fail 'external no-trace scan failed'
+    fail 'isolated no-trace scan failed'
 fi
 
 if [[ -z "$REPORT_PATH" || ! -f "$REPORT_PATH" ]]; then
@@ -394,17 +394,17 @@ if [[ -n "$REPORT_PATH" && -f "$REPORT_PATH" ]]; then
 fi
 
 if [[ -z "$TEST_COMMAND" || -z "$LINT_COMMAND" ]]; then
-    fail 'test and lint commands must be supplied by the project adapter'
+    fail 'test and lint commands must be supplied by the local profile'
 else
     if bash -c "$TEST_COMMAND"; then
-        [[ "$EVIDENCE_MODE" == workflow-only ]] && pass 'workflow adapter checks (workflow-only; not product evidence)' || pass 'project tests'
+        [[ "$EVIDENCE_MODE" == workflow-only ]] && pass 'local workflow checks (workflow-only)' || pass 'project tests'
     else
-        [[ "$EVIDENCE_MODE" == workflow-only ]] && fail 'workflow adapter checks failed' || fail 'project tests failed'
+        [[ "$EVIDENCE_MODE" == workflow-only ]] && fail 'local workflow checks failed' || fail 'project tests failed'
     fi
     if bash -c "$LINT_COMMAND"; then
-        [[ "$EVIDENCE_MODE" == workflow-only ]] && pass 'workflow adapter lint (workflow-only; not product evidence)' || pass 'project linter'
+        [[ "$EVIDENCE_MODE" == workflow-only ]] && pass 'local workflow lint (workflow-only)' || pass 'project linter'
     else
-        [[ "$EVIDENCE_MODE" == workflow-only ]] && fail 'workflow adapter lint failed' || fail 'project linter failed'
+        [[ "$EVIDENCE_MODE" == workflow-only ]] && fail 'local workflow lint failed' || fail 'project linter failed'
     fi
 fi
 

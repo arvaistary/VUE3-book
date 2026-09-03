@@ -10,8 +10,9 @@
 - `stack.md` — формат и структура книги;
 - `docs/agent-dod.md` — критерии готовности;
 - `docs/gates-extensions.md` — дополнительные gates;
-- `docs/principles/` — постоянные правила;
-- `scripts/check-book.sh` — проверка рукописи;
+ - `docs/principles/` — постоянные правила;
+ - `scripts/check-book.sh` — проверка рукописи;
+ - `docs/technology-integrity-report.md` — границы адаптера и его доказательства;
 - `verify-workflow.sh` и `lint-workflow.sh` — общие проверки установки.
 
 `workflow/core/` изменять под книгу нельзя. Если нужна новая проверка текста,

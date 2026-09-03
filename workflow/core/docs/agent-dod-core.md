@@ -1,34 +1,29 @@
-# Agent DoD — Core (универсальный)
+# Definition of Done — общая часть
 
-**Портативный слой.** Stack-specific gates — project adapter extensions.
-В текущем project adapter полный DoD — `workflow/project/docs/agent-dod.md`.
+Definition of Done (DoD) — список условий, по которым человек и агент решают,
+что задача действительно готова. Этот файл описывает общие условия; локальные
+детали находятся в `workflow/project/docs/agent-dod.md`.
 
----
+## Порядок перед `READY`
 
-## Когда применять
+1. Прочитайте спецификацию, план и список действий.
+2. До реализации заполните workflow contract: мутации, родительские сущности,
+   состояния, права, границы, side effects, concurrency и доказательства.
+3. Выполните применимые gates.
+4. Проведите adversarial review — отдельную проверку опасных и отрицательных
+   сценариев.
+5. Заполните DoD report с Evidence Index.
+6. Закоммитьте разрешённые изменения и запустите финализатор.
 
-Перед «готово» агент:
+`READY` возможен только при коде выхода `0` у
+`workflow/project/hybrid-finalize.sh`.
 
-1. Читает спеку (TASK-NN или `specs/…/spec.md`).
-2. До implement заполняет **Workflow contract**: mutation surface, parent,
-   state matrix, domain-code tests, boundary/security/E2E obligations.
-3. Проходит применимые gates (core + project extensions).
-4. Выполняет [adversarial post-implementation review](adversarial-review.md).
-5. Заполняет **DoD report** (шаблон ниже).
-6. Запускает project adapter для hybrid-finalize.sh; статус READY допускается
-   только при нулевом exit code.
+## Gate A — состав изменений
 
----
+В коммит входят только файлы из `Expected diff` в спецификации. `Exclude from
+diff` задаёт denylist — файлы, которые менять нельзя.
 
-## Gate A — Состав merge request (MR)
-
-**Блокирующий**, если задача предполагает commit.
-
-### Правило
-
-В diff только файлы из user story. Секции **Expected diff** / **Exclude from diff** в спеке — allowlist и denylist.
-
-### Как проверить
+Проверьте:
 
 ```bash
 git status --short
@@ -37,190 +32,79 @@ git diff --name-only
 git diff --cached --name-only
 ```
 
-### Типичный denylist (настраивается project adapter-ом)
+Если нашли лишний файл, не удаляйте чужие изменения. Сначала выясните, кому
+они принадлежат, затем оставьте их вне текущего коммита.
 
-- IDE/agent paths, `.gitignore` без запроса;
-- generated artifacts (OpenAPI json, build output);
-- локальные workflow-артефакты, если не в allowlist;
-- project metadata and actor/environment fixtures (`.specify/`, test-client auth
-  and environment files) unless the task explicitly changes them;
-- массовое форматирование несвязанных файлов.
+После коммита рабочая копия должна быть чистой. Финализатор сравнивает HEAD с
+`base_ref` и отдельно учитывает staged, unstaged и untracked-файлы.
 
-### Если лишний файл в diff
+## Gate G — тесты и стиль
 
-Unstaged denylist-файлы: сохранить пользовательские изменения, убрать только свои:
+Локальный profile задаёт команды тестов и lint. Обязательная проверка должна
+быть запущена текущим финализатором; skipped, unavailable и старый отчёт не
+закрывают gate.
 
-```bash
-git restore --worktree -- <denylist-file>
-```
+## Самопроверка
 
----
+- [ ] В коде, тестах и fixtures нет секретов или PII.
+- [ ] Нет несвязанных рефакторингов.
+- [ ] Все коды ошибок и отрицательные исходы из спецификации проверены.
+- [ ] Mutation inventory перечисляет все операции и их state-specific outcomes.
+- [ ] Для каждой границы права и приватность имеют решение и именованную
+      проверку.
+- [ ] Server-controlled fields перечислены и исключены из mass assignment.
+- [ ] Для side effects проверены timing, rollback и отсутствие дубликатов.
+- [ ] Для concurrency указан runtime, а доказательство получено текущим
+      запуском.
+- [ ] Для `AUTH_MATRIX_ROW_COVERAGE: required` каждая строка связана с case ID
+      и конкретным assertion.
+- [ ] Для `CONTRACT_RECONCILIATION: required` сверены spec, plan, tasks,
+      implementation, docs, tests и evidence.
+- [ ] Adversarial review охватывает scope, actor × operation, ошибки ввода,
+      состояния, side effects, concurrency и Evidence Index.
 
-### Post-commit finalization
-
-Hybrid Finalize is a post-commit gate. Before running it, commit only the
-allowlisted implementation paths from this work item and keep the worktree
-clean. The finalizer verifies that HEAD changed after base_ref and rejects any
-remaining staged, unstaged or untracked implementation path. The DoD report
-must contain FEATURE_COMMIT=PASS.
-
-## Gate G — Тесты и стиль
-
-**Блокирующий** всегда.
-
-Команды и runtime — из technology profile adapter-а. Минимум:
-
-- полный или targeted test suite;
-- linter/formatter на изменённые файлы.
-
-Зелёный CI **не отменяет** gates A–F.
-
----
-
-## Self-audit (универсальный)
-
-После gates:
-
-- [ ] Нет секретов / PII в коде, тестах, fixtures.
-- [ ] Нет unrelated refactor в diff.
-- [ ] Все `code` / error codes из спеки покрыты тестами.
-- [ ] Workflow contract заполнен; при `MUTATION_SURFACE=yes` inventory содержит
-      все новые mutation paths, parent soft-delete и state-specific outcomes.
-- [ ] `PARENT_GUARD_STRATEGY` зафиксирован; для `new` есть причина и тест на
-      расхождение с существующим guard.
-- [ ] Boundary, security/privacy и E2E obligations из workflow contract имеют
-      именованные тесты или честную запись о неприменимости.
-- [ ] Если объявлен `SECURITY_INPUT_PROFILE`, adversarial input matrix покрывает
-      короткие, смешанные, кодировочные и усечённые варианты, применимые к
-      данному parser/upload.
-- [ ] Если объявлен `AUTH_MATRIX_COVERAGE`, каждый существенный actor fixture
-      имеет стабильный case ID и отдельную named assertion; широкое слово
-      "participant" не заменяет конкретную роль.
-- [ ] Если объявлен `AUTH_MATRIX_ROW_COVERAGE: required`, каждая строка
-      authorization matrix связана с case ID и обратной ссылкой на конкретный
-      named assertion; class/file-only proof не принимается.
-- [ ] Если объявлен `CONTRACT_RECONCILIATION: required`, claims сверены по
-      цепочке spec → plan/tasks → implementation → API/docs → test → current
-      evidence; несовпадающие исходы и конфликтующие маркеры отчёта устранены.
-- [ ] Если объявлен `E2E_EXECUTION: required`, E2E действительно запущен
-      финализатором текущего commit, а не перенесён из старого отчёта.
-- [ ] Defense in depth: HTTP validation ≠ единственная защита доменных инвариантов.
-- [ ] Adversarial review: scope, actor × operation, malformed-request precedence,
-      live side-effect wiring, concurrency runtime и evidence integrity.
-- [ ] Server-owned fields are explicitly listed and excluded from model mass
-      assignment; the model boundary has a named regression assertion.
-- [ ] Every cross-scope privacy boundary has an explicit decision and named
-      assertion; an implied or contradictory list/resource policy is not PASS.
-
-Stack-specific checklist — principles project adapter-а.
-
----
-
-## DoD report (шаблон)
+## Шаблон отчёта
 
 ```markdown
-## DoD report — TASK-NN / work-item
+## DoD report — work-item
 
-**Спека:** путь к spec
+**Спецификация:** `specs/<work-item>/spec.md`
 
-### Gates (core)
-- [ ] A — MR scope: …
-- [ ] G — Tests: …; Linter: …
+### Gates
+- [ ] A — scope: …
+- [ ] G — tests: …; lint: …
 
-### Gates (project extensions — отметить применимые)
-- [ ] B — Контракт полей: …
-- [ ] C — Auth matrix: …
-- [ ] D — Freeze / pending inventory: …
-- [ ] E — Side effects/handlers: …
-- [ ] F — Batch: …
-- [ ] H — E2E collection: …
-
-### Spec-Kit finalize (если hybrid)
-- [ ] Tasks из tasks.md: …
-- [ ] Constitution: …
-
-### Mutation inventory (если workflow)
-| Путь | freeze / locked | pending | soft-delete |
-|------|-----------------|---------|-------------|
-| … | … | … |
-
-### Workflow contract verification
-- [ ] `ADVERSARIAL_REVIEW=PASS` — post-implementation review выполнен по
-      [adversarial-review.md](adversarial-review.md).
-- [ ] `WORKFLOW_CONTRACT=PASS` — declarations и required sections проверены.
-- [ ] `PARENT_GUARD_AUDIT=PASS` — выбран и проверен способ reuse/adaptation
-      существующего parent guard.
-- [ ] `DOMAIN_CODES=PASS` — каждый stable code сопоставлен с тестом.
-- [ ] `BOUNDARY_TESTS=PASS` — boundary cases выполнены.
-- [ ] `SECURITY_CONTRACT=PASS` — auth/privacy/logging проверены.
-- [ ] `SIDE_EFFECT_WIRING=PASS` — только если contract требует side effects;
-      live producer/handler/transport wiring подтверждён adapter-specific proof.
-- [ ] `CAPABILITY_SECURITY=PASS` — только если contract требует capability/public
-      security; format/hash, invalidation, resource allowlist и mutation boundary
-      подтверждены named tests.
-- [ ] `E2E_SCENARIO=PASS` — executable flow выполнен с dynamic identifiers.
-- [ ] `CONCURRENCY_EVIDENCE=PASS` и фактический adapter runtime marker — только
-      если contract требует concurrency; skipped-only execution не считается
-      PASS.
-- [ ] `CONTRACT_RECONCILIATION=PASS` — только если этот extension объявлен и
-      таблица source-of-truth reconciliation закрыта текущим evidence.
+### Workflow contract
+- [ ] `WORKFLOW_CONTRACT=PASS` — команда checker-а и результат
+- [ ] `ADVERSARIAL_REVIEW=PASS` — review выполнен
+- [ ] `FEATURE_COMMIT=PASS` — коммит после `base_ref`
 
 ### Evidence index
-Маркер — это строка `NAME=PASS`, которая сообщает о результате одной
-обязательной проверки. Таблица ниже должна позволять другому человеку
-воспроизвести этот результат:
-
-| Маркер | Чем подтверждён результат |
-|--------|---------------------------|
-| `TASKS_COMPLETE=PASS` | команда или список завершённых пунктов |
-| `WORKFLOW_CONTRACT=PASS` | команда checker-а и её результат |
-| `FEATURE_COMMIT=PASS` | commit после `base_ref` и чистый worktree |
-| `EVIDENCE_MODE=product` | adapter запустил команды продукта; для sandbox — `workflow-only` |
-| `PRODUCT_EVIDENCE=NOT_CLAIMED` | обязательно для режима `workflow-only` |
-| `SERVER_CONTROLLED_FIELDS=PASS` | проверка границы модели и regression test |
-| `PRIVACY_BOUNDARY=PASS` | принятое решение о видимости и конкретный тест |
-| `SIDE_EFFECT_WIRING=PASS` | тест реальной связки побочного эффекта, если он нужен |
-
-### Открытые пункты
-- …
-
-### Команды
-\`\`\`
-…
-\`\`\`
+| Маркер | Команда / тест / фактический вывод |
+|--------|------------------------------------|
+| `TASKS_COMPLETE=PASS` | `<команда или список завершённых пунктов>` |
+| `WORKFLOW_CONTRACT=PASS` | `<команда checker-а>` |
+| `FEATURE_COMMIT=PASS` | `<commit и чистый status>` |
 ```
 
-Без заполненного DoD report задача **не сдаётся**. Для каждой строки с `PASS`
-укажите фактическую команду, конкретный тест или вывод runtime. Команды и
-окружение в отчёте должны браться из technology profile adapter-а, а не из
-предположений агента о стеке.
+Для каждой строки `PASS` укажите конкретное подтверждение. Не добавляйте
+маркер, если соответствующее обязательство отсутствует в задаче.
 
 ## Машинная проверка
 
-Finalize запускается после feature commit. Успешный тест в грязном worktree не
-является доказательством поставки: runner отдельно проверяет историю commit и
-чистоту worktree после commit.
+Финализатор проверяет active work-item или явный brief, `base_ref`, commit
+ancestry, чистоту рабочей копии, allowlist/denylist, обязательные артефакты,
+whitespace и Evidence Index. В full-режиме он также проверяет `spec.md`,
+`plan.md` и `tasks.md`.
 
-В hybrid-репозитории финальная проверка должна делегироваться
-workflow/project/hybrid-finalize.sh. Runner проверяет active Spec-Kit
-work-item (или явный TASK-only режим), незавершённые tasks.md, неизменяемый
-base_ref, allowlist/denylist, tracked и untracked whitespace, обязательные
-артефакты, report evidence и переданные stack-команды. Project layer добавляет
-stack-specific structural evidence checks и отвечает за выбор runtime.
+В режиме `workflow-only` отчёт должен содержать:
 
-В отчёте обязательно присутствует строка:
-
-~~~text
+```text
 TASKS_COMPLETE=PASS
 WORKFLOW_CONTRACT=PASS
-~~~
+EVIDENCE_MODE=workflow-only
+PRODUCT_EVIDENCE=NOT_CLAIMED
+```
 
-Отчёт также обязан содержать `EVIDENCE_MODE=product` для продуктового
-адаптера. Для sandbox-only адаптера используется `EVIDENCE_MODE=workflow-only`
-вместе с `PRODUCT_EVIDENCE=NOT_CLAIMED`; такой результат подтверждает только
-установку и wiring workflow.
-
----
-
-*Core version: 1.6 — adapter boundary + profile-driven runtime/evidence
-extensions + v2.1 source-of-truth/auth coverage extensions.*
+Последняя строка подчёркивает границу: проект проверяет workflow и не заявляет
+результат тестирования приложения.
