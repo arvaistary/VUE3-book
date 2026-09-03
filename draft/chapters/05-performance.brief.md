@@ -40,5 +40,5 @@ Promise. Конкретные метрики производительност�
 ## Источники и проверка
 
 Используются [web.dev — user-centric performance](https://web.dev/articles/user-centric-performance-metrics)
-и [Nuxt — SEO and Meta](https://nuxt.com/docs/getting-started/seo-meta). Код
+и [Nuxt 4 — SEO and Meta](https://nuxt.com/docs/4.x/getting-started/seo-meta). Код
 проверяется журналом операций с локальным планировщиком.

@@ -42,5 +42,5 @@
 ## Источники и проверка
 
 Основы поведения формы сверяются с [MDN — отправка форм](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms)
-и [Nuxt — Data Fetching](https://nuxt.com/docs/getting-started/data-fetching). Код
+и [Nuxt 4 — Data Fetching](https://nuxt.com/docs/4.x/getting-started/data-fetching). Код
 проверяется последовательностями успешного, ошибочного и повторного вызова.

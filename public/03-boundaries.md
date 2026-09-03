@@ -231,8 +231,9 @@ route middleware проверяет только маршрутный призн
 `articles`, `api.example.invalid`, тексты и ответы полностью вымышлены.
 Пример сервиса автономен: `createArticleService` использует локальный
 `localRequest`, поэтому его можно проверить через `node --check` и
-последовательные вызовы без внешнего API. Фрагмент Nuxt-кода проверяется
-статически в учебном Nuxt-приложении. Термины сверены с [документацией Nuxt 3
+последовательные вызовы без внешнего API. Nuxt-фрагменты проверяются
+статически по официальной документации; для исполнения им требуется отдельное
+учебное Nuxt-приложение. Термины сверены с [документацией Nuxt 3
 о плагинах](https://nuxt.com/docs/3.x/directory-structure/plugins), [Nuxt 3
 о middleware](https://nuxt.com/docs/3.x/directory-structure/middleware),
 [Nuxt 4 plugins](https://nuxt.com/docs/4.x/directory-structure/app/plugins),

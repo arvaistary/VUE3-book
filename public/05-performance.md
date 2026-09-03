@@ -122,5 +122,5 @@ SSR помогает показать HTML раньше, но может уве�
 сервис не вызывается. Функции можно проверить через `node --check` и локальный
 планировщик. Технические утверждения сверены с [web.dev о пользовательских
 метриках](https://web.dev/articles/user-centric-performance-metrics),
-[документацией Nuxt о SEO и метаданных](https://nuxt.com/docs/getting-started/seo-meta)
-и [документацией Nuxt о рендеринге](https://nuxt.com/docs/guide/concepts/rendering).
+[документацией Nuxt 4 о SEO и метаданных](https://nuxt.com/docs/4.x/getting-started/seo-meta)
+и [документацией Nuxt 4 о рендеринге](https://nuxt.com/docs/4.x/guide/concepts/rendering).
