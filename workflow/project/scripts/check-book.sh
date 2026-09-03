@@ -4,7 +4,37 @@ set -euo pipefail
 
 SCRIPT_DIR="$(CDPATH='' cd "$(dirname "$0")" && pwd -P)"
 REPO_ROOT="$(CDPATH='' cd "$SCRIPT_DIR/../../.." && pwd -P)"
+CHECK_ROOT="$REPO_ROOT"
+SELF_TEST=false
 FAILURES=0
+
+usage() {
+    printf '%s\n' 'Usage: check-book.sh [--root PATH] [--self-test]'
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --root)
+            [[ $# -ge 2 && -n "$2" ]] || { usage >&2; exit 2; }
+            CHECK_ROOT="$2"
+            shift 2
+            ;;
+        --self-test)
+            SELF_TEST=true
+            shift
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
+            ;;
+    esac
+done
+
+CHECK_ROOT="$(CDPATH='' cd "$CHECK_ROOT" && pwd -P)"
 
 fail() {
     printf 'FAIL: %s\n' "$1" >&2
@@ -12,8 +42,8 @@ fail() {
 }
 
 for directory in draft public; do
-    [[ -d "$REPO_ROOT/$directory" ]] || fail "missing book directory: $directory"
-    [[ -f "$REPO_ROOT/$directory/README.md" ]] || fail "missing $directory/README.md"
+    [[ -d "$CHECK_ROOT/$directory" ]] || fail "missing book directory: $directory"
+    [[ -f "$CHECK_ROOT/$directory/README.md" ]] || fail "missing $directory/README.md"
 done
 
 while IFS= read -r file; do
@@ -21,13 +51,13 @@ while IFS= read -r file; do
     if rg -n -e 'TODO:' -e 'NEEDS CLARIFICATION' -e '\[FEATURE NAME\]' -e '\[Brief Title\]' "$file" >/dev/null; then
         fail "unfinished template marker: $file"
     fi
-done < <(find "$REPO_ROOT/draft" "$REPO_ROOT/public" -type f -name '*.md' -not -name '._*' -print)
+done < <(find "$CHECK_ROOT/draft" "$CHECK_ROOT/public" -type f -name '*.md' -not -name '._*' -print)
 
-if rg -n -i -e 'front2025' -e 'development-rc' -e 'henderson' -e '/Volumes/' -e 'e:\\project' -e 'internal api' -e 'private endpoint' "$REPO_ROOT/public" >/dev/null; then
+if rg -n -i -e 'front2025' -e 'development-rc' -e 'henderson' -e '/Volumes/' -e 'e:\\project' -e 'internal api' -e 'private endpoint' -e 'internal\.example\.invalid' -e 'private\.example\.invalid' "$CHECK_ROOT/public" >/dev/null; then
     fail 'public manuscript contains a forbidden internal reference'
 fi
 
-if ! node - "$REPO_ROOT" <<'NODE'
+if ! node - "$CHECK_ROOT" <<'NODE'
 const fs = require('fs');
 const path = require('path');
 
@@ -67,6 +97,20 @@ if (errors.length) {
 NODE
 then
     fail 'a relative Markdown link is broken'
+fi
+
+if [[ "$SELF_TEST" == true ]]; then
+    TEST_ROOT="$(mktemp -d)"
+    trap 'rm -rf "$TEST_ROOT"' EXIT
+    mkdir -p "$TEST_ROOT/draft" "$TEST_ROOT/public"
+    printf '%s\n' '# Draft' > "$TEST_ROOT/draft/README.md"
+    printf '%s\n' '# Public' > "$TEST_ROOT/public/README.md"
+    printf '%s\n' '# Contents' '[закрытый документ](https://internal.example.invalid/notes)' > "$TEST_ROOT/public/contents.md"
+    if "$0" --root "$TEST_ROOT" >/dev/null 2>&1; then
+        fail 'boundary regression did not reject a forbidden internal link'
+    else
+        printf 'BOUNDARY_REGRESSION=PASS\n'
+    fi
 fi
 
 if [[ "$FAILURES" -gt 0 ]]; then
