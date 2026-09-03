@@ -144,4 +144,3 @@ HTTP-запроса или сетевого повтора. Для критич�
 Его можно проверить через `node --check`, передав локальные функции `send` для
 трёх исходов и контролируемый Promise. Основы формы сверены с [MDN о работе с
 формами](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms).
-

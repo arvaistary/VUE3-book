@@ -139,4 +139,3 @@ function createCartState(initialItems = []) {
 проверку двух экземпляров через `node`. Понятия сопоставлены с [руководством
 Vue по управлению состоянием](https://vuejs.org/guide/scaling-up/state-management.html)
 и [описанием режимов рендеринга Nuxt](https://nuxt.com/docs/guide/concepts/rendering).
-

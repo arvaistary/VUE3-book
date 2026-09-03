@@ -118,4 +118,3 @@ runtime-подход уменьшает число разных артефакт
 Понятия сверены с [Dockerfile reference](https://docs.docker.com/reference/dockerfile/),
 [документацией Kubernetes о probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
 и [руководством Nuxt по deployment](https://nuxt.com/docs/getting-started/deployment).
-

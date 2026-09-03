@@ -129,4 +129,3 @@ URL. Затем объясните, где должна находиться п�
 конфигурациями. Общие понятия сверены с [документацией Nuxt о структуре
 приложения](https://nuxt.com/docs/guide/directory-structure/nuxt) и
 [runtime configuration](https://nuxt.com/docs/guide/going-further/runtime-config).
-

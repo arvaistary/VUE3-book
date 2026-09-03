@@ -135,4 +135,3 @@ Middleware здесь уместен для проверки маршрута: �
 внешнего API. Термины сверены с [документацией Nuxt о
 плагинах](https://nuxt.com/docs/guide/directory-structure/plugins) и
 [middleware](https://nuxt.com/docs/guide/directory-structure/middleware).
-

@@ -117,4 +117,3 @@ SSR помогает показать HTML раньше, но может уве�
 метриках](https://web.dev/articles/user-centric-performance-metrics),
 [документацией Nuxt о SEO и метаданных](https://nuxt.com/docs/getting-started/seo-meta)
 и [документацией Nuxt о рендеринге](https://nuxt.com/docs/guide/concepts/rendering).
-

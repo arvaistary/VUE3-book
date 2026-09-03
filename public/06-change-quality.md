@@ -116,4 +116,3 @@ API.
 проверяют ожидаемое поведение при запуске скомпилированного файла. Термины
 сверены с [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/2/basic-types.html)
 и [руководством Vitest](https://vitest.dev/guide/).
-

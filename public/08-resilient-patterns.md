@@ -143,4 +143,3 @@ popup.open('remove-record', { id: 'record-7', title: 'Черновик' });
 упражнения. Термины сверены с [Vue Composables](https://vuejs.org/guide/reusability/composables.html),
 [Vue Teleport](https://vuejs.org/guide/built-ins/teleport.html) и [WAI-ARIA
 dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/).
-
