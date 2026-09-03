@@ -1,0 +1,40 @@
+---
+description: Always apply the repository's Spec-Kit plus Hybrid workflow guidance.
+globs:
+alwaysApply: true
+---
+
+# Spec-Kit + Hybrid workflow
+
+This repository uses the Umbrella Spec-Kit lifecycle together with the
+portable Hybrid workflow. Treat the following as the operational command map:
+
+- `/speckit.start` starts a work item only from a clean Git worktree and records
+  `base_ref`.
+- `/speckit.specify` creates the feature contract; `/speckit.clarify` closes
+  decisions before plan.
+- `/speckit.plan` and `/speckit.tasks` operate on the canonical full-mode
+  `specs/<work-item>/spec.md`; run
+  `bash workflow/core/check-workflow-contract.sh --task-spec <spec.md>` before
+  implementation.
+- `/speckit.analyze` is a blocking consistency and source-of-truth audit before
+  implementation.
+- `/speckit.implement` follows the replaceable `workflow/project/` adapter.
+- `/speckit.hybrid-finalize` is the delivery gate. It must finish with exit code
+  0 and a report containing the required evidence markers.
+
+For new high-risk work items, declare
+`CONTRACT_RECONCILIATION: required` and, when authorization has independent
+actor/outcome branches, `AUTH_MATRIX_ROW_COVERAGE: required`. The core checks
+the declarations and evidence shape; the product adapter checks technology-
+specific named assertions and current runtime proof.
+
+Before claiming READY, commit only the allowlisted implementation and run the
+Hybrid finalizer on a clean worktree. A workflow-only pass confirms only this
+workflow installation and is never product delivery evidence.
+
+Codex/API prompts are under `.codex/prompts`, Codex project skills are under
+`.agents/skills`, and this rule keeps the same command contract visible to
+Cursor sessions. В этом репозитории есть только проверки самого workflow;
+перед использованием в продукте замените `workflow/project/` адаптером с
+реальными технологическими проверками.

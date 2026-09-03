@@ -1,0 +1,13 @@
+# Hybrid active work-item state is local provenance, not a feature artifact
+.specify/.active-work-item.json
+
+# Sidecar binding and scanner configuration contain machine-local paths
+.specify/external-project.toml
+.specify/no-trace-patterns.toml
+
+# Local credentials, runtime output and OS metadata
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
