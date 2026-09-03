@@ -39,3 +39,10 @@
 - Не закрывайте задачу текстом `PASS` без команды или другого проверяемого
   подтверждения.
 - Для нового work item используйте `.specify/scripts/bash/start-work-item.sh`.
+
+## Active Technologies
+- Markdown в UTF-8; Bash для проверок; Node.js со стандартной библиотекой для проверки ссылок + Spec-Kit Modern workflow, Git, Bash и Node.js; publishing-зависимость не нужна на этом этапе (main)
+- Файлы Markdown в репозитории; база данных и внешние сервисы не используются (main)
+
+## Recent Changes
+- main: Added Markdown в UTF-8; Bash для проверок; Node.js со стандартной библиотекой для проверки ссылок + Spec-Kit Modern workflow, Git, Bash и Node.js; publishing-зависимость не нужна на этом этапе
