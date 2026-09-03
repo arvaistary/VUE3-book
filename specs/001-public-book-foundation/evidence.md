@@ -22,6 +22,8 @@
 
 Контракт проверен командой
 `bash workflow/core/check-workflow-contract.sh --task-spec specs/001-public-book-foundation/spec.md`.
+Конституция проверена `bash workflow/core/check-constitution.sh --file
+.specify/memory/constitution.md`; в ней нет незаполненных шаблонных маркеров.
 Мутации предметной области, авторизация, concurrency и внешние API для этого
 документационного work item-а не применяются; обязательны граница публикации,
 adversarial review и сверка канонических документов.

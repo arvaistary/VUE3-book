@@ -221,6 +221,7 @@ artifact:book_spec
 artifact:draft_manuscript
 artifact:public_manuscript
 AGENTS.md
+README.md
 workflow/README.md
 workflow/core/
 workflow/project/
@@ -245,9 +246,9 @@ workflow/project/
 ## Hybrid required artifacts
 
 ~~~text
-artifact:book_spec
-artifact:draft_manuscript
-artifact:public_manuscript
+specs/001-public-book-foundation/tasks.md
+draft/chapter-status.md
+public/README.md
 ~~~
 
 ## Hybrid required evidence
