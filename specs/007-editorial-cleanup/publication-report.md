@@ -63,6 +63,7 @@ workflow остались в drafts; `workflow/core/` не изменялся.
 |---|---|---|
 | Prerequisites | `bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` | PASS |
 | Workflow contract | `bash workflow/core/check-workflow-contract.sh --task-spec specs/007-editorial-cleanup/spec.md` | PASS |
+| Constitution | `.specify/memory/constitution.md` and `check-constitution.sh` | PASS |
 | Book content | `bash workflow/project/scripts/check-book.sh` | PASS |
 | Workflow verification | `bash workflow/project/verify-workflow.sh` | PASS |
 | Workflow lint | `bash workflow/project/lint-workflow.sh` | PASS |
@@ -125,6 +126,14 @@ workflow остались в drafts; `workflow/core/` не изменялся.
 
 ## Hybrid required evidence
 
+TASKS_COMPLETE=PASS
+FEATURE_COMMIT=PASS
+WORKFLOW_CONTRACT=PASS
+BOUNDARY_TESTS=PASS
+SIDE_EFFECT_TESTS=PASS
+PRIVACY_BOUNDARY=PASS
+ADVERSARIAL_REVIEW=PASS
+CONTRACT_RECONCILIATION=PASS
 EDITORIAL_CLEAN=PASS
 TECHNICAL_CONTENT_PRESERVED=PASS
 PUBLIC_SOURCE_SYNC=PASS

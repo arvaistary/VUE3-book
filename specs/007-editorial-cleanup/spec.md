@@ -262,6 +262,8 @@ draft/chapter-template.md
 public/
 dist/frontend-systems-book.epub
 workflow/project/scripts/check-editorial-cleanup.mjs
+workflow/project/scripts/check-publication.mjs
+draft/chapter-status.md
 ~~~
 
 ## Exclude from diff
@@ -275,7 +277,6 @@ draft/briefs/
 draft/editorial-guidelines.md
 draft/confidentiality-policy.md
 draft/source-map.md
-draft/chapter-status.md
 ~~~
 
 ## Hybrid required artifacts
