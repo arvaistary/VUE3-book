@@ -44,8 +44,8 @@ reader-facing README, введения и содержания, затем пе�
   пределы уже обобщённой книги.
 - **Canonical artifacts**: PASS — решения фиксируются в этом spec, plan и
   tasks; evidence будет добавлен после командных проверок.
-- **Verifiable readiness**: PENDING до выполнения checker-ов, ZIP test и
-  branch synchronization; перед финализацией должен быть PASS.
+- **Verifiable readiness**: PASS — checker-ы, ZIP test, branch synchronization
+  и Hybrid Finalizer завершились успешно.
 
 ## Project Structure
 

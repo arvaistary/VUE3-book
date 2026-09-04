@@ -72,6 +72,7 @@ workflow остались в drafts; `workflow/core/` не изменялся.
 | ZIP integrity | `unzip -t dist/frontend-systems-book.epub` | PASS |
 | Publication tree | `node workflow/project/scripts/check-publication.mjs main` and `drafts` | PASS |
 | Whitespace | `git diff --check` | PASS |
+| Hybrid finalizer | `bash workflow/project/hybrid-finalize.sh` | PASS |
 
 ## Negative checks
 

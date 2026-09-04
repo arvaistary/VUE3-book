@@ -77,6 +77,9 @@ DRAFTS_TREE=PASS
 DRAFTS_PUBLIC_PARITY=PASS
 PUBLICATION_CHECK=PASS
 
+bash workflow/project/hybrid-finalize.sh --task-spec specs/007-editorial-cleanup/spec.md --report specs/007-editorial-cleanup/publication-report.md --base-ref 38f86e386e3987d0875d87a1669d80efec6825d2 --runtime auto --technology-profile workflow/project/technology-profile.env
+Hybrid Finalizer: PASSED
+
 git push origin main drafts
 ordinary non-force push completed; no branch deletion or force option used
 
