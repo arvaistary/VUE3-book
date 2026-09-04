@@ -51,11 +51,11 @@
 
 ## Phase 4: Evidence and publication
 
-- [ ] T018 Обновить `chapter-status.md` и evidence фактическими результатами
+- [x] T018 Обновить `chapter-status.md` и evidence фактическими результатами
   ревью и командных проверок; отметить contract reconciliation.
-- [ ] T019 Отметить задачи выполненными только после evidence, проверить
+- [x] T019 Отметить задачи выполненными только после evidence, проверить
   expected diff, clean worktree и создать коммит work item-а после base ref.
-- [ ] T020 Синхронизировать очищенные `public/` и EPUB в `main`, проверить
+- [x] T020 Синхронизировать очищенные `public/` и EPUB в `main`, проверить
   allowlist/navigation/EPUB/remote, отправить `main` и `drafts` обычным push и
   запустить hybrid finalizer.
 
