@@ -23,7 +23,7 @@ const MANUSCRIPT_FILES = MAIN_FILES.filter((path) => path.startsWith("public/") 
 const CHAPTER_FILES = MANUSCRIPT_FILES.filter((path) => path !== "public/README.md" && path !== "public/contents.md");
 const DRAFT_PREFIXES = ["draft/", "specs/", ".specify/", ".agents/", ".codex/", ".cursor/", "workflow/"];
 const DRAFT_FILES = ["AGENTS.md"];
-const EPUB_HASH = "9306a2f1d3c6bfd873c0da74e8bbc6f1b6f86a24e90ffb68310bbcb38e1f33d8";
+const EPUB_HASH = "b320a8cc6c765413914c4405f73a2e95be66601018d2ddc69340008caf8d63f6";
 
 const ref = process.argv[2] || "main";
 const files = treeFiles(ref);

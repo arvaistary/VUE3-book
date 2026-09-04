@@ -81,6 +81,20 @@ versionless-ссылки заменены на явные страницы Nuxt 
 `specs/003-nuxt-technical-audit/nuxt-audit-report.md`, командные результаты — в
 `specs/003-nuxt-technical-audit/evidence.md`.
 
+## Editorial cleanup 007
+
+В work item `specs/007-editorial-cleanup/` из восьми draft/public-глав удалён
+раздел `Публичная проверка`. Из введения, публичного README и части 1–2 убраны
+формулировки о внутреннем курсе, исходном проекте и редакторской процедуре;
+Nuxt 3/4, технические рекомендации и упражнения сохранены. Шаблон главы больше
+не предлагает вставлять отчёт о проверке в читательский текст.
+
+Результат проверки: `node workflow/project/scripts/check-editorial-cleanup.mjs
+--self-test`, `check-book.sh --self-test`, reader audit, JavaScript syntax check,
+privacy scan Markdown/EPUB и negative checks завершились успешно. EPUB
+пересобран из очищенного `public/`; подробные команды и результаты находятся в
+`specs/007-editorial-cleanup/evidence.md`.
+
 ## Порядок чтения и зависимости
 
 Введение не требует специальных предпосылок. Часть 1 вводит систему и

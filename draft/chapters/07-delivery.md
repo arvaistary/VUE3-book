@@ -197,16 +197,3 @@ runtime-подход уменьшает число разных артефакт
 `checkDependency`, который возвращает `false`, и объясните, почему его статус
 должен быть `503`, а не ошибка живости. Составьте список из трёх проверок перед
 постепенным обновлением контейнера.
-
-## Публичная проверка
-
-Адрес `api.example.invalid` и имя `PUBLIC_API_ORIGIN` синтетические; секреты,
-внутренние хосты и настройки инфраструктуры отсутствуют. Код автономен и
-проверяется через `node --check` и вызовы с локальными объектами окружения.
-Фрагменты Nuxt-кода требуют учебного Nuxt-приложения. Понятия сверены с
-[Dockerfile reference](https://docs.docker.com/reference/dockerfile/),
-[документацией Kubernetes о probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/),
-[руководством Nuxt 3 по deployment](https://nuxt.com/docs/3.x/getting-started/deployment),
-[руководством Nuxt 4 по deployment](https://nuxt.com/docs/4.x/getting-started/deployment),
-[runtimeConfig Nuxt 4](https://nuxt.com/docs/4.x/guide/going-further/runtime-config) и
-[документацией Nuxt 4 по обновлению](https://nuxt.com/docs/4.x/getting-started/upgrade).
