@@ -302,7 +302,6 @@ dist/
 ~~~text
 specs/006-publication-sync/tasks.md
 specs/006-publication-sync/evidence.md
-specs/006-publication-sync/publication-report.md
 README.md
 ~~~
 
