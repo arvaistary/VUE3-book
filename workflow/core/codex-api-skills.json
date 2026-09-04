@@ -1,0 +1,18 @@
+{
+  "description": "Project-local Codex skills for the Spec-Kit and Hybrid workflow.",
+  "skills": [
+    {"name": "speckit-adopt", "description": "Bootstrap Spec-Kit project memory.", "path": ".agents/skills/speckit-adopt"},
+    {"name": "speckit-constitution", "description": "Update the project constitution.", "path": ".agents/skills/speckit-constitution"},
+    {"name": "speckit-specify", "description": "Create a complete feature spec.", "path": ".agents/skills/speckit-specify"},
+    {"name": "speckit-start", "description": "Start a clean Spec-Kit work item.", "path": ".agents/skills/speckit-start"},
+    {"name": "speckit-clarify", "description": "Resolve feature contract decisions.", "path": ".agents/skills/speckit-clarify"},
+    {"name": "speckit-plan", "description": "Create an implementation plan.", "path": ".agents/skills/speckit-plan"},
+    {"name": "speckit-tasks", "description": "Break a plan into verified tasks.", "path": ".agents/skills/speckit-tasks"},
+    {"name": "speckit-analyze", "description": "Audit spec-plan-task consistency.", "path": ".agents/skills/speckit-analyze"},
+    {"name": "speckit-checklist", "description": "Generate a requirements checklist.", "path": ".agents/skills/speckit-checklist"},
+    {"name": "speckit-implement", "description": "Implement a verified task plan.", "path": ".agents/skills/speckit-implement"},
+    {"name": "speckit-finalize", "description": "Run the base Spec-Kit audit.", "path": ".agents/skills/speckit-finalize"},
+    {"name": "speckit-hybrid-finalize", "description": "Run fail-closed Hybrid Finalize.", "path": ".agents/skills/speckit-hybrid-finalize"},
+    {"name": "speckit-taskstoissues", "description": "Convert tasks to issue-shaped items.", "path": ".agents/skills/speckit-taskstoissues"}
+  ]
+}

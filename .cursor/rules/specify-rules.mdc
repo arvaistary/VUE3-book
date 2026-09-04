@@ -1,0 +1,31 @@
+---
+description: Основные правила Spec-Kit Modern для агентской сессии.
+globs:
+alwaysApply: true
+---
+
+# Правила Spec-Kit Modern
+
+Этот репозиторий использует единый жизненный цикл задачи и строгие gates.
+Считайте каноническими только артефакты, указанные в активном work-item.
+
+- `/speckit.start` начинает задачу только из чистой рабочей копии и записывает
+  `base_ref`.
+- `/speckit.specify` создаёт контракт, `/speckit.clarify` закрывает решения до
+  планирования.
+- `/speckit.plan` и `/speckit.tasks` работают с каноническим full-mode
+  `specs/<work-item>/spec.md`.
+- До реализации запустите
+  `bash workflow/core/check-workflow-contract.sh --task-spec <spec.md>`.
+- `/speckit.analyze` блокирует противоречия между требованиями, планом, задачами
+  и доказательствами.
+- `/speckit.implement` не начинает код, если обязательный preflight завершился
+  ошибкой.
+- `/speckit.hybrid-finalize` — единственная команда, принимающая решение
+  `READY`. Она должна завершиться кодом `0` и получить отчёт с Evidence Index.
+
+Перед `READY` проверьте, что коммит создан после `base_ref`, изменены только
+разрешённые файлы, а рабочая копия чистая. Режим evidence берётся из
+technology-profile.env: в этой книге `product` подтверждает рукопись и её
+примеры, но не поведение закрытого приложения; `workflow-only` подтверждает
+только целостность workflow.
