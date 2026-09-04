@@ -247,14 +247,14 @@ AUTH_MATRIX_ROW_COVERAGE: not_applicable
 
 ## Contract reconciliation
 
-| Claim | Canonical outcome | Implementation / proof | Status |
-|---|---|---|---|
-| main is the published branch | only publication tree remains | main tree allowlist | open |
-| drafts holds working context | workflow and draft files remain there | drafts tree inventory | open |
-| readers have Markdown navigation | README and contents link all materials | link checker | open |
-| readers can download EPUB | existing checked artifact is linked and present | EPUB checker and SHA-256 | open |
-| remote is synchronized safely | origin and two branch refs match | remote inspection | open |
-| source content is unchanged | public hashes before/after match | hash comparison | open |
+| Claim | Canonical outcome | Implementation / proof | Evidence / run | Status |
+|---|---|---|---|---|
+| main is the published branch | only publication tree remains | main tree allowlist | check-publication.mjs main | pass |
+| drafts holds working context | workflow and draft files remain there | drafts tree inventory | check-publication.mjs drafts | pass |
+| readers have Markdown navigation | README and contents link all materials | link checker | check-publication.mjs main | pass |
+| readers can download EPUB | existing checked artifact is linked and present | EPUB checker and SHA-256 | check-epub.mjs and unzip -t | pass |
+| remote is synchronized safely | origin and two branch refs match | remote inspection | git ls-remote --heads origin | pass |
+| source content is unchanged | public hashes before/after match | hash comparison | source manifest comparison | pass |
 
 ## Adversarial review
 

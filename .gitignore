@@ -5,12 +5,7 @@
 !.env.example
 node_modules/
 
-# Editorial and workflow material belongs only to the drafts branch.
-.specify/
-.agents/
-.codex/
-.cursor/
-draft/
-specs/
-workflow/
-AGENTS.md
+# Active work-item state and sidecar configuration are local only.
+.specify/.active-work-item.json
+.specify/external-project.toml
+.specify/no-trace-patterns.toml
